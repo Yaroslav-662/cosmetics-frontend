@@ -1,13 +1,18 @@
 // src/features/orders/ui/OrderTable.tsx
-
 import React from "react";
 import type { Order } from "../model/order.types";
 import { OrderStatusBadge } from "./OrderStatusBadge";
-import  Button   from "@/shared/ui/Button";
+import Button from "@/shared/ui/Button";
 
 interface Props {
   orders: Order[];
   onChangeStatus?: (orderId: string, newStatus: string) => void;
+}
+
+function renderUser(u: Order["user"]) {
+  if (!u) return "—";
+  if (typeof u === "string") return u; // може бути email або id
+  return u.email || u.name || u._id || "—";
 }
 
 export const OrderTable: React.FC<Props> = ({ orders, onChangeStatus }) => {
@@ -30,35 +35,38 @@ export const OrderTable: React.FC<Props> = ({ orders, onChangeStatus }) => {
               key={o._id}
               className="border-b border-neutral-800 hover:bg-neutral-800/50"
             >
-              <td className="px-4 py-3 text-neutral-200">
-                #{o._id.slice(-6)}
-              </td>
+              <td className="px-4 py-3 text-neutral-200">#{o._id.slice(-6)}</td>
+
               <td className="px-4 py-3 text-neutral-300">
-                {o.user || "—"}
+                {renderUser(o.user)}
               </td>
+
               <td className="px-4 py-3 text-neutral-100">{o.total} ₴</td>
+
               <td className="px-4 py-3">
                 <OrderStatusBadge status={o.status} />
               </td>
+
               <td className="px-4 py-3 text-neutral-400">
-                {new Date(o.createdAt).toLocaleString()}
+                {new Date(o.createdAt).toLocaleString("uk-UA")}
               </td>
+
               <td className="px-4 py-3">
-                {onChangeStatus && (
+                {onChangeStatus ? (
                   <div className="flex gap-2 flex-wrap">
-                    {["pending", "paid", "shipped", "delivered", "cancelled"].map(
-                      (s) => (
-                        <Button
-                          key={s}
-                          size="sm"
-                          variant={o.status === s ? "secondary" : "ghost"}
-                          onClick={() => onChangeStatus(o._id, s)}
-                        >
-                          {s}
-                        </Button>
-                      )
-                    )}
+                    {["pending", "paid", "shipped", "delivered", "cancelled"].map((s) => (
+                      <Button
+                        key={s}
+                        size="sm"
+                        variant={o.status === s ? "secondary" : "ghost"}
+                        onClick={() => onChangeStatus(o._id, s)}
+                      >
+                        {s}
+                      </Button>
+                    ))}
                   </div>
+                ) : (
+                  <span className="text-neutral-500">—</span>
                 )}
               </td>
             </tr>
@@ -66,10 +74,7 @@ export const OrderTable: React.FC<Props> = ({ orders, onChangeStatus }) => {
 
           {!orders.length && (
             <tr>
-              <td
-                colSpan={6}
-                className="px-4 py-6 text-center text-neutral-400"
-              >
+              <td colSpan={6} className="px-4 py-6 text-center text-neutral-400">
                 Немає замовлень.
               </td>
             </tr>
