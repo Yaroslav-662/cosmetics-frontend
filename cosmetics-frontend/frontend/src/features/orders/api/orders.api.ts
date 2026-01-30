@@ -1,31 +1,26 @@
+// src/features/orders/api/orders.api.ts
 import { api } from "@/core/api/axios";
+import type { Order } from "@/features/orders/model/order.types";
 
-export type OrderStatus = "pending" | "paid" | "shipped" | "delivered" | "cancelled";
-
-export type OrderItem = {
-  product: any; // може бути id або populated object
-  quantity: number;
-};
-
-export type Order = {
-  _id: string;
-  user?: any;
-  items: OrderItem[];
-  total?: number;
-  status: OrderStatus;
-  address: string;
-  paymentMethod: "card" | "cash";
-  createdAt: string;
-};
+type OrdersResponse = Order[];
 
 export const OrdersApi = {
-  async getOrders(): Promise<Order[]> {
-    const { data } = await api.get("/api/orders");
+  async getMyOrAll(): Promise<Order[]> {
+    const { data } = await api.get<OrdersResponse>("/api/orders");
     return data;
   },
 
-  async updateStatus(id: string, status: OrderStatus) {
-    const { data } = await api.put(`/api/orders/${id}`, { status });
+  async create(payload: {
+    items: { product: string; quantity: number }[];
+    address: string;
+    paymentMethod: string;
+  }) {
+    const { data } = await api.post("/api/orders", payload);
+    return data as { message?: string; order?: Order };
+  },
+
+  async updateStatus(orderId: string, status: string) {
+    const { data } = await api.put(`/api/orders/${orderId}`, { status });
     return data;
   },
 };
