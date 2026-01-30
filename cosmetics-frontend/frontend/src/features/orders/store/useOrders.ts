@@ -3,17 +3,15 @@ import { create } from "zustand";
 import type { Order, OrderStatus } from "@/features/orders/model/order.types";
 import { OrdersApi } from "@/features/orders/api/orders.api";
 
-export type OrdersState = {
+type OrdersState = {
   orders: Order[];
   loading: boolean;
   error: string | null;
 
   fetchOrders: () => Promise<void>;
 
-  // realtime helpers
+  // realtime
   setOrders: (orders: Order[]) => void;
-  addOrderRealtime: (order: Order) => void;
-  updateOrderRealtime: (order: Order) => void;
   updateStatusRealtime: (orderId: string, status: OrderStatus) => void;
 };
 
@@ -27,10 +25,9 @@ export const useOrders = create<OrdersState>((set, get) => ({
     try {
       const orders = await OrdersApi.getOrders();
 
-      // нормалізація (на випадок якщо бекенд колись поверне total undefined)
       const normalized = orders.map((o) => ({
         ...o,
-        total: typeof o.total === "number" ? o.total : 0,
+        total: typeof o.total === "number" ? o.total : 0, // щоб не валилось по типах/рендеру
         items: Array.isArray(o.items) ? o.items : [],
       }));
 
@@ -43,28 +40,10 @@ export const useOrders = create<OrdersState>((set, get) => ({
     }
   },
 
-  setOrders: (orders) => {
-    set({ orders });
-  },
-
-  addOrderRealtime: (order) => {
-    const exists = get().orders.some((o) => o._id === order._id);
-    if (exists) return;
-
-    set({ orders: [order, ...get().orders] });
-  },
-
-  updateOrderRealtime: (order) => {
-    set({
-      orders: get().orders.map((o) => (o._id === order._id ? order : o)),
-    });
-  },
+  setOrders: (orders) => set({ orders }),
 
   updateStatusRealtime: (orderId, status) => {
-    set({
-      orders: get().orders.map((o) =>
-        o._id === orderId ? { ...o, status } : o
-      ),
-    });
+    const updated = get().orders.map((o) => (o._id === orderId ? { ...o, status } : o));
+    set({ orders: updated });
   },
 }));
