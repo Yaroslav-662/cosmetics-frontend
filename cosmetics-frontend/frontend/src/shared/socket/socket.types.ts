@@ -1,4 +1,7 @@
 // src/shared/socket/socket.types.ts
+
+export type UserRole = "user" | "admin";
+
 export type OrderStatus =
   | "pending"
   | "paid"
@@ -7,14 +10,28 @@ export type OrderStatus =
   | "delivered"
   | "cancelled";
 
+export type OrderItem = {
+  product: string; // product id
+  quantity: number;
+};
+
+export type OrderUser = {
+  _id: string;
+  name?: string;
+  email?: string;
+  role?: UserRole;
+};
+
 export type Order = {
   _id: string;
-  user?: string;
-  items: Array<{ product: string; quantity: number }>;
+  user?: OrderUser | string; // бекенд може повертати populated object або просто id
+  items: OrderItem[];
   address?: string;
-  paymentMethod?: "card" | "cash" | "paypal" | string;
+  paymentMethod?: string;
+
   status: OrderStatus;
   total: number;
+
   createdAt: string;
   updatedAt?: string;
 };
@@ -28,17 +45,21 @@ export type OrderStatusUpdatedPayload = {
   status: OrderStatus;
 };
 
+// ✅ Server → Client events
 export type ServerToClientEvents = {
   "orders:updated": (payload: OrdersUpdatedPayload) => void;
   "orderStatusUpdated": (payload: OrderStatusUpdatedPayload) => void;
 
-  // (якщо маєш інші — додаси)
+  // можна додати:
+  // "order:created": (payload: { order: Order }) => void;
 };
 
+// ✅ Client → Server events
 export type ClientToServerEvents = {
   "order:updateStatus": (payload: { orderId: string; status: OrderStatus }) => void;
 };
 
+// якщо захочеш typed socket.data
 export type SocketData = {
-  user?: { id: string; role: "admin" | "user" };
+  user?: { id: string; role: UserRole };
 };
