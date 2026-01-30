@@ -1,25 +1,23 @@
 // src/features/orders/pages/RealtimeOrdersPage.tsx
-
 import React, { useEffect } from "react";
-import { useOrders } from "../hooks/useOrders";
-import { useOrderRealtime } from "../hooks/useOrderRealtime";
-import { OrderTable } from "../ui/OrderTable";
+import { MetaTags } from "@/app/seo/MetaTags";
+import Card from "@/shared/ui/Card";
 
-export const RealtimeOrdersPage: React.FC = () => {
-  const { orders, fetchOrders, updateOrderStatus } = useOrders();
-  const { updateStatusRealtime } = useOrderRealtime();
+import { useOrders } from "@/features/orders/store/useOrders";
+import { useOrderRealtime } from "@/features/orders/hooks/useOrderRealtime";
+import { OrderList } from "@/features/orders/OrderList";
+
+export default function RealtimeOrdersPage() {
+  const orders = useOrders((s) => s.orders);
+  const fetchOrders = useOrders((s) => s.fetchOrders);
+  const loading = useOrders((s) => s.loading);
+  const error = useOrders((s) => s.error);
+
+  useOrderRealtime();
 
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
-
-  const handleStatusChange = async (orderId: string, newStatus: string) => {
-    // realtime update через socket
-    updateStatusRealtime({ orderId, status: newStatus });
-
-    // резервний REST (щоб точно все збереглося)
-    await updateOrderStatus(orderId, { status: newStatus as any });
-  };
 
   return (
     <div className="p-6 text-white space-y-4">
@@ -39,3 +37,4 @@ export const RealtimeOrdersPage: React.FC = () => {
     </div>
   );
 };
+
