@@ -1,25 +1,25 @@
+// src/features/orders/hooks/useOrderRealtime.ts
 import { useEffect } from "react";
 import { useSocket } from "@/app/providers/SocketProvider";
+
 import { useOrders } from "@/features/orders/store/useOrders";
-import type { Order } from "@/features/orders/model/order.types";
+import type { Order, OrderStatus } from "@/features/orders/model/order.types";
 
 export function useOrderRealtime() {
   const { socket } = useSocket();
 
-  const addOrderDirect = useOrders((s) => s.addOrderDirect);
-  const updateOrderStatus = useOrders((s) => s.updateOrderStatus);
+  const setOrders = useOrders((s) => s.setOrders);
+  const updateStatusRealtime = useOrders((s) => s.updateStatusRealtime);
 
   useEffect(() => {
     if (!socket) return;
 
     const onOrdersUpdated = (payload: { orders: Order[] }) => {
-      // якщо хочеш — просто replace all:
-      // useOrders.setState({ items: payload.orders })
-      payload.orders.forEach((o) => addOrderDirect(o));
+      setOrders(payload.orders);
     };
 
-    const onStatusUpdated = (payload: { orderId: string; status: Order["status"] }) => {
-      updateOrderStatus(payload.orderId, payload.status);
+    const onStatusUpdated = (payload: { orderId: string; status: OrderStatus }) => {
+      updateStatusRealtime(payload.orderId, payload.status);
     };
 
     socket.on("orders:updated", onOrdersUpdated);
@@ -29,5 +29,5 @@ export function useOrderRealtime() {
       socket.off("orders:updated", onOrdersUpdated);
       socket.off("orderStatusUpdated", onStatusUpdated);
     };
-  }, [socket, addOrderDirect, updateOrderStatus]);
+  }, [socket, setOrders, updateStatusRealtime]);
 }
