@@ -1,25 +1,23 @@
 // src/features/orders/api/orders.api.ts
 import { api } from "@/core/api/axios";
-import type { Order } from "@/features/orders/model/order.types";
-
-type OrdersResponse = Order[];
+import type { Order, OrderStatus } from "@/features/orders/model/order.types";
 
 export const OrdersApi = {
-  async getMyOrAll(): Promise<Order[]> {
-    const { data } = await api.get<OrdersResponse>("/api/orders");
+  async getOrders(): Promise<Order[]> {
+    const { data } = await api.get<Order[]>("/api/orders");
     return data;
   },
 
-  async create(payload: {
+  async createOrder(payload: {
     items: { product: string; quantity: number }[];
     address: string;
     paymentMethod: string;
-  }) {
+  }): Promise<{ message?: string; order?: Order }> {
     const { data } = await api.post("/api/orders", payload);
-    return data as { message?: string; order?: Order };
+    return data;
   },
 
-  async updateStatus(orderId: string, status: string) {
+  async updateOrderStatus(orderId: string, status: OrderStatus): Promise<{ message?: string; order?: Order }> {
     const { data } = await api.put(`/api/orders/${orderId}`, { status });
     return data;
   },
