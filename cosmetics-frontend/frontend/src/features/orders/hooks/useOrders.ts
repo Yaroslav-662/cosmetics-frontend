@@ -23,7 +23,7 @@ export const useOrders = create<OrdersState>((set, get) => ({
   fetchOrders: async () => {
     set({ loading: true, error: null });
     try {
-      const data = await OrdersApi.getMyOrAll();
+      const data = await OrdersApi.getOrders();
       set({ items: data, loading: false });
     } catch (err: any) {
       set({ loading: false, error: err?.response?.data?.message || "Не вдалося завантажити замовлення" });
@@ -46,3 +46,4 @@ export const useOrders = create<OrdersState>((set, get) => ({
     });
   },
 }));
+
