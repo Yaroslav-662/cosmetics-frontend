@@ -1,53 +1,48 @@
 import { create } from "zustand";
-import { OrdersApi, type Order, type OrderStatus } from "@/features/orders/api/orders.api";
+import type { Order } from "@/features/orders/model/order.types";
+import { OrdersApi } from "@/features/orders/api/orders.api";
 
-interface OrdersState {
-  orders: Order[];
+type OrdersState = {
+  items: Order[];
   loading: boolean;
   error: string | null;
 
   fetchOrders: () => Promise<void>;
-  updateStatus: (id: string, status: OrderStatus) => Promise<boolean>;
 
-  // WS helper
-  upsertOrder: (order: Order) => void;
-}
+  // ✅ прямі (realtime) апдейти
+  addOrderDirect: (order: Order) => void;
+  updateOrderDirect: (order: Order) => void;
+  updateOrderStatus: (orderId: string, status: Order["status"]) => void;
+};
 
 export const useOrders = create<OrdersState>((set, get) => ({
-  orders: [],
+  items: [],
   loading: false,
   error: null,
 
   fetchOrders: async () => {
     set({ loading: true, error: null });
     try {
-      const orders = await OrdersApi.getOrders();
-      set({ orders, loading: false });
-    } catch (e: any) {
-      set({ error: e?.response?.data?.message || "Не вдалося завантажити замовлення.", loading: false });
+      const data = await OrdersApi.getMyOrAll();
+      set({ items: data, loading: false });
+    } catch (err: any) {
+      set({ loading: false, error: err?.response?.data?.message || "Не вдалося завантажити замовлення" });
     }
   },
 
-  updateStatus: async (id, status) => {
-    try {
-      const updated = await OrdersApi.updateStatus(id, status);
-      // бекенд може повертати updated order або message — тому робимо обережно
-      const list = get().orders.map((o) => (o._id === id ? { ...o, ...(updated?._id ? updated : { status }) } : o));
-      set({ orders: list });
-      return true;
-    } catch {
-      return false;
-    }
+  addOrderDirect: (order) => {
+    set({ items: [order, ...get().items] });
   },
 
-  upsertOrder: (order) => {
-    const current = get().orders;
-    const idx = current.findIndex((o) => o._id === order._id);
-    if (idx === -1) set({ orders: [order, ...current] });
-    else {
-      const copy = [...current];
-      copy[idx] = { ...copy[idx], ...order };
-      set({ orders: copy });
-    }
+  updateOrderDirect: (order) => {
+    set({ items: get().items.map((o) => (o._id === order._id ? order : o)) });
+  },
+
+  updateOrderStatus: (orderId, status) => {
+    set({
+      items: get().items.map((o) =>
+        o._id === orderId ? { ...o, status } : o
+      ),
+    });
   },
 }));
