@@ -1,9 +1,7 @@
 // src/features/orders/hooks/useOrderRealtime.ts
 import { useEffect } from "react";
 import { useSocket } from "@/app/providers/SocketProvider";
-
 import { useOrders } from "@/features/orders/store/useOrders";
-import type { Order, OrderStatus } from "@/features/orders/model/order.types";
 
 export function useOrderRealtime() {
   const { socket } = useSocket();
@@ -14,12 +12,16 @@ export function useOrderRealtime() {
   useEffect(() => {
     if (!socket) return;
 
-    const onOrdersUpdated = (payload: { orders: Order[] }) => {
-      setOrders(payload.orders);
+    const onOrdersUpdated = (payload: any) => {
+      // бек може прислати {orders} або order
+      const orders = payload?.orders;
+      if (Array.isArray(orders)) setOrders(orders);
     };
 
-    const onStatusUpdated = (payload: { orderId: string; status: OrderStatus }) => {
-      updateStatusRealtime(payload.orderId, payload.status);
+    const onStatusUpdated = (payload: any) => {
+      const orderId = payload?.orderId || payload?._id;
+      const status = payload?.status;
+      if (orderId && status) updateStatusRealtime(orderId, status);
     };
 
     socket.on("orders:updated", onOrdersUpdated);
