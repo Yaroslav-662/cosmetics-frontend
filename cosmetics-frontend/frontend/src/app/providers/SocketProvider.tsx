@@ -21,7 +21,8 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   useEffect(() => {
-    const access = tokenStore.getAccessToken?.() || tokenStore.getTokens?.()?.accessToken;
+    const access = tokenStore.getAccessToken();
+
 
     // якщо немає токена — не підключаємо socket
     if (!access) {
@@ -64,3 +65,4 @@ export function useSocket() {
   if (!ctx) throw new Error("useSocket must be used within <SocketProvider />");
   return ctx;
 }
+
