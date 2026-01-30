@@ -1,116 +1,66 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { io, Socket } from "socket.io-client";
+// src/app/providers/SocketProvider.tsx
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { io, type Socket } from "socket.io-client";
 import { tokenStore } from "@/core/auth/tokenStore";
-import { useAuthStore } from "@/store/auth.store";
 
-/**
- * Типи подій WebSocket (під твоє API)
- */
-type ServerToClientEvents = {
-  "order:created": (data: any) => void;
-  "order:updated": (data: any) => void;
-  "order:updateStatus": (data: { orderId: string; status: string }) => void;
-};
+import type { ServerToClientEvents, ClientToServerEvents } from "./socket.types";
 
-type ClientToServerEvents = {
-  joinRoom: (room: string) => void;
-  leaveRoom: (room: string) => void;
-};
+export type AppSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
-type SocketContextValue = {
-  socket: Socket<ServerToClientEvents, ClientToServerEvents> | null;
+type Ctx = {
+  socket: AppSocket | null;
   connected: boolean;
 };
 
-/**
- * Контекст
- */
-const SocketContext = createContext<SocketContextValue>({
-  socket: null,
-  connected: false,
-});
+const SocketContext = createContext<Ctx | null>(null);
 
-/**
- * ✅ ХУК — його ти імпортуєш у OrdersPage, Notifications і т.д.
- */
-export function useSocket() {
-  return useContext(SocketContext);
-}
-
-/**
- * ✅ ПРОВАЙДЕР (БЕЗ default export)
- */
-export function SocketProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { user } = useAuthStore();
-  const socketRef = useRef<Socket | null>(null);
+export function SocketProvider({ children }: { children: React.ReactNode }) {
+  const [socket, setSocket] = useState<AppSocket | null>(null);
   const [connected, setConnected] = useState(false);
 
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   useEffect(() => {
-    const token = tokenStore.getAccessToken();
+    const access = tokenStore.getAccessToken?.() || tokenStore.getTokens?.()?.accessToken;
 
-    // ❗ Гість — без WebSocket
-    if (!token || !user) return;
-
-    // ❗ не створюємо повторно
-    if (socketRef.current) return;
-
-    const socket = io(import.meta.env.VITE_API_URL, {
-      transports: ["websocket"],
-      auth: {
-        token,
-      },
-    });
-
-    socketRef.current = socket;
-
-    socket.on("connect", () => {
-      setConnected(true);
-      console.log("🟢 WS connected", socket.id);
-
-      // Адмін може слухати всі замовлення
-      if (user.role === "admin") {
-        socket.emit("joinRoom", "admin");
-      }
-    });
-
-    socket.on("disconnect", () => {
+    // якщо немає токена — не підключаємо socket
+    if (!access) {
+      if (socket) socket.disconnect();
+      setSocket(null);
       setConnected(false);
-      console.log("🔴 WS disconnected");
+      return;
+    }
+
+    const s: AppSocket = io(apiUrl, {
+      path: "/socket.io",
+      transports: ["websocket"],
+      withCredentials: true,
+      auth: { token: access },
     });
 
-    socket.on("connect_error", (err) => {
-      console.error("WS error:", err.message);
-    });
+    setSocket(s);
+
+    const onConnect = () => setConnected(true);
+    const onDisconnect = () => setConnected(false);
+
+    s.on("connect", onConnect);
+    s.on("disconnect", onDisconnect);
 
     return () => {
-      if (socketRef.current) {
-        if (user.role === "admin") {
-          socketRef.current.emit("leaveRoom", "admin");
-        }
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
+      s.off("connect", onConnect);
+      s.off("disconnect", onDisconnect);
+      s.disconnect();
     };
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiUrl]);
 
-  return (
-    <SocketContext.Provider
-      value={{
-        socket: socketRef.current,
-        connected,
-      }}
-    >
-      {children}
-    </SocketContext.Provider>
-  );
+  const value = useMemo(() => ({ socket, connected }), [socket, connected]);
+
+  return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
+}
+
+export function useSocket() {
+  const ctx = useContext(SocketContext);
+  if (!ctx) throw new Error("useSocket must be used within <SocketProvider />");
+  return ctx;
 }
