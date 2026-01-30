@@ -1,14 +1,20 @@
-// src/features/orders/pages/OrdersPage.tsx
 import React, { useEffect } from "react";
 import { MetaTags } from "@/app/seo/MetaTags";
-import { useOrders } from "@/features/orders/hooks/useOrders";
+import Card from "@/shared/ui/Card";
+
+import { useOrders } from "@/features/orders/store/useOrders";
+import { OrderList } from "@/features/orders/OrderList"; // якщо шлях інший — поправ
 
 export default function OrdersPage() {
-  const { orders, loading, error, fetchOrders } = useOrders();
+  const orders = useOrders((s) => s.orders);
+  const loading = useOrders((s) => s.loading);
+  const error = useOrders((s) => s.error);
+  const fetchOrders = useOrders((s) => s.fetchOrders);
 
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
+
 
   return (
     <>
@@ -49,3 +55,4 @@ export default function OrdersPage() {
     </>
   );
 }
+
