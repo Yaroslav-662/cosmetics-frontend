@@ -1,48 +1,33 @@
 import { useEffect } from "react";
-import { useOrders } from "./useOrders";
-import type { Order } from "../model/order.types";
-import { socket } from "@/sockets/ws-events";
+import { useSocket } from "@/app/providers/SocketProvider";
+import { useOrders } from "@/features/orders/store/useOrders";
+import type { Order } from "@/features/orders/model/order.types";
 
 export function useOrderRealtime() {
+  const { socket } = useSocket();
+
   const addOrderDirect = useOrders((s) => s.addOrderDirect);
-  const updateOrderDirect = useOrders((s) => s.updateOrderDirect);
+  const updateOrderStatus = useOrders((s) => s.updateOrderStatus);
 
   useEffect(() => {
     if (!socket) return;
 
-    const onCreated = (order: Order) => {
-      addOrderDirect(order);
+    const onOrdersUpdated = (payload: { orders: Order[] }) => {
+      // якщо хочеш — просто replace all:
+      // useOrders.setState({ items: payload.orders })
+      payload.orders.forEach((o) => addOrderDirect(o));
     };
 
-    const onUpdated = (order: Order) => {
-      updateOrderDirect(order);
+    const onStatusUpdated = (payload: { orderId: string; status: Order["status"] }) => {
+      updateOrderStatus(payload.orderId, payload.status);
     };
 
-    socket.on("order:created", onCreated);
-    socket.on("order:updated", onUpdated);
+    socket.on("orders:updated", onOrdersUpdated);
+    socket.on("orderStatusUpdated", onStatusUpdated);
 
     return () => {
-      socket.off("order:created", onCreated);
-      socket.off("order:updated", onUpdated);
+      socket.off("orders:updated", onOrdersUpdated);
+      socket.off("orderStatusUpdated", onStatusUpdated);
     };
-  }, [addOrderDirect, updateOrderDirect]);
-
-  const createOrderRealtime = (payload: {
-    items: { product: string; quantity: number; price: number }[];
-    total: number;
-  }) => {
-    socket?.emit("order:create", payload);
-  };
-
-  const updateStatusRealtime = (payload: {
-    orderId: string;
-    status: string;
-  }) => {
-    socket?.emit("order:updateStatus", payload);
-  };
-
-  return {
-    createOrderRealtime,
-    updateStatusRealtime,
-  };
+  }, [socket, addOrderDirect, updateOrderStatus]);
 }
