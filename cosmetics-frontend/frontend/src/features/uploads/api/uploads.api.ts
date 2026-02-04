@@ -1,47 +1,50 @@
 // src/features/uploads/api/uploads.api.ts
-import { api } from "@/core/api/axios";
+import { api } from "@/shared/api/api"; // твій axios instance
+// Якщо нема - скажи, я дам готовий
 
-export type UploadedFile = {
+type UploadListItem = {
   name: string;
+  url: string;
   size?: number;
   createdAt?: string;
-  url?: string;
+  isDir?: boolean;
 };
 
-function normalizeFiles(data: any): UploadedFile[] {
-  if (Array.isArray(data)) return data;
-  if (data && Array.isArray(data.files)) return data.files;
-  return [];
+type UploadListResponse = {
+  files: UploadListItem[];
+};
+
+function safeFiles(data: any): UploadListItem[] {
+  const files = data?.files;
+  return Array.isArray(files) ? files : [];
 }
 
 export const UploadsApi = {
-  // ✅ список файлів (admin): бек вертає { files: [...] }
-  async getFiles(): Promise<UploadedFile[]> {
-    const { data } = await api.get("/api/upload", { withCredentials: true });
-    return normalizeFiles(data);
+  async listAll(): Promise<UploadListResponse> {
+    const { data } = await api.get("/upload");
+    return { files: safeFiles(data) };
   },
 
-  // ✅ upload 1..10 фото товару (admin)
-  // Swagger: POST /api/upload/products multipart/form-data images[]
-  async uploadProductImages(files: File[]): Promise<{ urls: string[] }> {
+  async listProductImages(): Promise<UploadListResponse> {
+    const { data } = await api.get("/upload/products");
+    return { files: safeFiles(data) };
+  },
+
+  async uploadProductImages(files: File[]) {
     const fd = new FormData();
-    files.forEach((f) => fd.append("images", f)); // field = images
+    files.forEach((f) => fd.append("images", f));
 
-    const { data } = await api.post("/api/upload/products", fd, {
+    const { data } = await api.post("/upload/products", fd, {
       headers: { "Content-Type": "multipart/form-data" },
-      withCredentials: true,
     });
 
-    // очікуємо { urls: [...] }
-    return { urls: Array.isArray(data?.urls) ? data.urls : [] };
+    // ✅ бек повертає urls[]
+    const urls = Array.isArray(data?.urls) ? data.urls : [];
+    return { urls, raw: data };
   },
 
-  // ✅ delete by url (admin)
   async deleteProductImageByUrl(url: string) {
-    const { data } = await api.delete("/api/upload/by-url", {
-      data: { url },
-      withCredentials: true,
-    });
+    const { data } = await api.delete("/upload/by-url", { data: { url } });
     return data;
   },
 };
