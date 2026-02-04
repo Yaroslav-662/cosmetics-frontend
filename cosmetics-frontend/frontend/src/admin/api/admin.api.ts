@@ -43,9 +43,7 @@ export async function adminCreateProduct(payload: {
   stock?: number;
   images?: string[];
 }) {
-  const { data } = await api.post("/api/products", payload, {
-    withCredentials: true,
-  });
+  const { data } = await api.post("/api/products", payload, { withCredentials: true });
   return data;
 }
 
@@ -60,11 +58,10 @@ export async function adminUpdateProduct(
     images: string[];
   }>
 ) {
-  const { data } = await api.put(`/api/products/${id}`, payload, {
-    withCredentials: true,
-  });
+  const { data } = await api.put(`/api/products/${id}`, payload, { withCredentials: true });
   return data;
 }
+
 
 export async function adminDeleteProduct(id: string) {
   const { data } = await api.delete(`/api/products/${id}`, {
@@ -83,17 +80,21 @@ export async function adminUploadProductImages(files: File[]) {
     withCredentials: true,
   });
 
-  return (data?.urls || []) as string[];
+  return data; // { urls: [...] }
 }
 
-// ✅ NEW: delete product image by url (or by filename)
 export async function adminDeleteProductImageByUrl(url: string) {
-  const filename = url.split("/").pop();
-  if (!filename) return;
-  const { data } = await api.delete(`/api/upload/products/${encodeURIComponent(filename)}`, {
+  const { data } = await api.delete("/api/upload/by-url", {
+    data: { url },
     withCredentials: true,
   });
   return data;
+}
+
+export async function adminGetFiles() {
+  const { data } = await api.get("/api/upload", { withCredentials: true });
+  // бек вертає { files: [...] }
+  return (data?.files ?? []) as any[];
 }
 
 // CATEGORIES
@@ -239,3 +240,4 @@ export async function adminRenameFile(oldName: string, newName: string) {
   const { data } = await api.put("/api/upload/rename", { oldName, newName }, { withCredentials: true });
   return data;
 }
+
