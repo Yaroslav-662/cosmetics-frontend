@@ -1,73 +1,71 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Button from "@/shared/ui/Button";
 
 type Props = {
   value: string[];
-  onChange: (images: string[]) => void;
-
-  // upload returns array of urls
+  onChange: (next: string[]) => void;
   onUpload: (files: File[]) => Promise<string[]>;
   onDeleteRemote?: (url: string) => Promise<any>;
-
   max?: number;
 };
 
-export default function ImageManager({
-  value,
-  onChange,
-  onUpload,
-  onDeleteRemote,
-  max = 10,
-}: Props) {
+export default function ImageManager({ value, onChange, onUpload, onDeleteRemote, max = 10 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const images = Array.isArray(value) ? value : [];
 
   const [uploading, setUploading] = useState(false);
-  const [deletingUrl, setDeletingUrl] = useState<string>("");
+  const [deleting, setDeleting] = useState<string>("");
 
-  const canAddMore = images.length < max;
+  const canAdd = images.length < max;
 
-  const previews = useMemo(() => images, [images]);
+  const openPicker = () => {
+    if (!canAdd) return alert(`Максимум ${max} фото`);
+    inputRef.current?.click();
+  };
 
-  async function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files || []);
+  const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const list = e.target.files;
     e.target.value = "";
-    if (!files.length) return;
+    if (!list || list.length === 0) return;
 
-    if (!canAddMore) return alert(`Максимум ${max} фото`);
+    const files = Array.from(list).filter((f) => f.type.startsWith("image/"));
+    if (!files.length) return alert("Вибери зображення (jpg/png/webp/gif).");
+
+    const free = max - images.length;
+    const sliced = files.slice(0, free);
 
     setUploading(true);
     try {
-      const urls = await onUpload(files);
+      const urls = await onUpload(sliced);
       if (!Array.isArray(urls) || urls.length === 0) {
-        alert("Upload не повернув url");
+        alert("Upload не повернув urls (перевір відповідь / токен / права).");
         return;
       }
-
-      const next = [...images, ...urls].slice(0, max);
-      onChange(next);
+      onChange([...images, ...urls].slice(0, max));
     } catch (err: any) {
-      alert(err?.message || "Помилка завантаження");
+      console.error(err);
+      alert(err?.response?.data?.message || err?.message || "Upload error");
     } finally {
       setUploading(false);
     }
-  }
+  };
 
-  async function removeOne(url: string) {
-    // 1) прибрати з state
+  const removeOne = async (url: string) => {
+    // optimistic UI
     onChange(images.filter((x) => x !== url));
 
-    // 2) (опційно) видалити з сервера
     if (!onDeleteRemote) return;
-    setDeletingUrl(url);
+
+    setDeleting(url);
     try {
       await onDeleteRemote(url);
-    } catch {
-      // не блокуємо UI
+    } catch (err) {
+      // не повертаємо в UI назад — просто лишиться файл на сервері
+      console.warn("Remote delete failed:", err);
     } finally {
-      setDeletingUrl("");
+      setDeleting("");
     }
-  }
+  };
 
   return (
     <div className="space-y-3">
@@ -77,54 +75,61 @@ export default function ImageManager({
         accept="image/*"
         multiple
         className="hidden"
-        onChange={handlePick}
+        onChange={onPick}
       />
 
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          disabled={!canAddMore || uploading}
-        >
+      <div className="flex items-center gap-2 flex-wrap">
+        <Button type="button" variant="outline" onClick={openPicker} disabled={!canAdd || uploading}>
           {uploading ? "Uploading…" : "Add photos"}
         </Button>
 
         <div className="text-xs text-neutral-400">
           {images.length}/{max}
         </div>
+
+        {images.length > 0 && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onChange([])}
+            disabled={uploading}
+          >
+            Clear (local)
+          </Button>
+        )}
       </div>
 
-      {previews.length > 0 ? (
+      {images.length === 0 ? (
+        <div className="text-sm text-neutral-500">Немає фото.</div>
+      ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {previews.map((url) => (
-            <div key={url} className="border border-neutral-800 rounded-xl p-2 bg-neutral-900/60">
-              <div className="aspect-square overflow-hidden rounded-lg bg-black/30">
+          {images.map((url) => (
+            <div key={url} className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950">
+              <div className="aspect-square bg-black/30">
                 <img
                   src={url}
                   alt=""
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).style.opacity = "0.3";
-                  }}
+                  onError={(e) => ((e.currentTarget as HTMLImageElement).style.opacity = "0.3")}
                 />
               </div>
-
-              <div className="pt-2">
+              <div className="p-2 flex items-center justify-between gap-2">
+                <div className="text-[10px] text-neutral-500 truncate" title={url}>
+                  {url}
+                </div>
                 <Button
                   type="button"
-                  variant="outline"
                   size="sm"
+                  variant="outline"
                   onClick={() => removeOne(url)}
-                  disabled={deletingUrl === url}
+                  disabled={uploading || deleting === url}
                 >
-                  {deletingUrl === url ? "Deleting…" : "Remove"}
+                  {deleting === url ? "…" : "Delete"}
                 </Button>
               </div>
             </div>
           ))}
         </div>
-      ) : (
-        <div className="text-sm text-neutral-400">Фото ще не додані.</div>
       )}
     </div>
   );
