@@ -6,39 +6,23 @@ export type UploadedFile = {
   size?: number;
   createdAt?: string;
   url?: string;
-  path?: string;
 };
 
-type UploadOneResponse = {
-  message?: string;
-  url?: string;
-  path?: string;
-  filename?: string;
-  mimetype?: string;
-  size?: number;
-  filePath?: string; // якщо бек колись так верне
-};
+type UploadManyResponse =
+  | { message?: string; urls: string[] }
+  | { message?: string; files: Array<{ url: string }> };
 
-type UploadManyResponse = {
-  message?: string;
-  urls: string[];
-  files?: Array<{ url: string; path?: string; filename?: string; size?: number; mimetype?: string }>;
-};
+type FilesResponse =
+  | { files: UploadedFile[] }
+  | UploadedFile[];
 
-function normalizeFiles(data: any): UploadedFile[] {
-  // case A: бек вернув масив напряму
+function normalizeFilesResponse(data: any): UploadedFile[] {
   if (Array.isArray(data)) return data;
-
-  // case B: бек вернув { files: [...] }
   if (data && Array.isArray(data.files)) return data.files;
-
-  // case C: бек вернув { items: [...] }
-  if (data && Array.isArray(data.items)) return data.items;
-
   return [];
 }
 
-function fileNameFromUrl(url: string) {
+function filenameFromUrl(url: string) {
   try {
     const u = new URL(url);
     return decodeURIComponent(u.pathname.split("/").pop() || "");
@@ -48,45 +32,43 @@ function fileNameFromUrl(url: string) {
 }
 
 export const UploadsApi = {
-  // ✅ старий endpoint: /api/upload/file (1 файл)
-  async uploadFile(file: File): Promise<UploadOneResponse> {
-    const form = new FormData();
-    form.append("file", file);
-
-    const { data } = await api.post<UploadOneResponse>("/api/upload/file", form, {
-      headers: { "Content-Type": "multipart/form-data" },
-      withCredentials: true,
-    });
-
-    return data;
-  },
-
-  // ✅ NEW: /api/upload/products (кілька фото товару)
+  // ✅ upload 1..10 product images (admin) -> returns urls[]
   async uploadProductImages(files: File[], max = 10): Promise<string[]> {
-    const form = new FormData();
-    files.slice(0, max).forEach((f) => form.append("images", f)); // важливо: "images"
+    const fd = new FormData();
+    files.slice(0, max).forEach((f) => fd.append("images", f)); // field name = images
 
-    const { data } = await api.post<UploadManyResponse>("/api/upload/products", form, {
+    const { data } = await api.post<UploadManyResponse>("/api/upload/products", fd, {
       headers: { "Content-Type": "multipart/form-data" },
       withCredentials: true,
     });
 
-    // якщо бек повернув { urls: [] }
-    if (data?.urls && Array.isArray(data.urls)) return data.urls;
+    // case A: { urls: [...] }
+    if ((data as any)?.urls && Array.isArray((data as any).urls)) return (data as any).urls;
 
-    // якщо бек повернув { files: [{url}] }
-    if (data?.files && Array.isArray(data.files)) return data.files.map((x) => x.url);
+    // case B: { files: [{url}] }
+    if ((data as any)?.files && Array.isArray((data as any).files)) {
+      return (data as any).files.map((x: any) => x.url).filter(Boolean);
+    }
 
     return [];
   },
 
-  // ✅ список файлів (адмін): /api/upload
+  // ✅ list uploaded files (admin) -> returns array
   async getFiles(): Promise<UploadedFile[]> {
-    const { data } = await api.get("/api/upload", { withCredentials: true });
-    return normalizeFiles(data);
+    const { data } = await api.get<FilesResponse>("/api/upload", { withCredentials: true });
+    return normalizeFilesResponse(data);
   },
 
-  // ✅ видалення файла (адмін): /api/upload/:name
+  // ✅ delete by URL (admin) -> swagger: DELETE /api/upload/by-url {url}
+  async deleteProductImageByUrl(url: string) {
+    const { data } = await api.delete("/api/upload/by-url", {
+      data: { url },
+      withCredentials: true,
+    });
+    return data;
+  },
+
+  // (optional) delete by filename
   async deleteFileByName(name: string) {
     const { data } = await api.delete(`/api/upload/${encodeURIComponent(name)}`, {
       withCredentials: true,
@@ -94,9 +76,9 @@ export const UploadsApi = {
     return data;
   },
 
-  // ✅ видалення зображення по URL (зручно для товарів)
-  async deleteProductImageByUrl(url: string) {
-    const name = fileNameFromUrl(url);
+  // fallback: delete from url by extracting filename
+  async deleteByUrlAsName(url: string) {
+    const name = filenameFromUrl(url);
     return this.deleteFileByName(name);
   },
 };
