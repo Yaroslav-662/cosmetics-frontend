@@ -213,9 +213,12 @@ export type UploadedFileDTO = {
 };
 
 export async function adminGetFiles() {
-  const { data } = await api.get<UploadedFileDTO[]>("/api/upload", { withCredentials: true });
-  return data;
+  const { data } = await api.get<{ files: UploadedFileDTO[] }>("/api/upload", {
+    withCredentials: true,
+  });
+  return data.files;
 }
+
 
 export async function adminUploadFile(file: File) {
   const fd = new FormData();
@@ -237,6 +240,7 @@ export async function adminRenameFile(oldName: string, newName: string) {
   const { data } = await api.put("/api/upload/rename", { oldName, newName }, { withCredentials: true });
   return data;
 }
+
 
 
 
