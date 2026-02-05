@@ -1,4 +1,4 @@
-import { api } from "@/shared/api/api";
+import { api } from "@/core/api/axios";
 
 export type UploadListItem = {
   name: string;
@@ -8,54 +8,60 @@ export type UploadListItem = {
 };
 
 export const uploadsApi = {
-  // ===== Admin files =====
+  // ✅ бекенд віддає { files: [...] }
   async getFiles() {
-    const { data } = await api.get<{ files: UploadListItem[] }>("/api/upload");
-    return data;
+    const { data } = await api.get<{ files: UploadListItem[] }>("/api/upload", {
+      withCredentials: true,
+    });
+    return data.files;
   },
 
   async uploadFile(file: File) {
-    const form = new FormData();
-    form.append("file", file);
+    const fd = new FormData();
+    fd.append("file", file);
 
-    const { data } = await api.post("/api/upload/file", form, {
+    const { data } = await api.post("/api/upload/file", fd, {
       headers: { "Content-Type": "multipart/form-data" },
+      withCredentials: true,
     });
+
     return data;
   },
 
   async deleteFile(name: string) {
-    const { data } = await api.delete(`/api/upload/${encodeURIComponent(name)}`);
+    const { data } = await api.delete(`/api/upload/${encodeURIComponent(name)}`, {
+      withCredentials: true,
+    });
     return data;
   },
 
-  async renameFile(oldName: string, newName: string) {
-    const { data } = await api.put("/api/upload/rename", { oldName, newName });
+  async renameFile(payload: { oldName: string; newName: string }) {
+    const { data } = await api.put("/api/upload/rename", payload, {
+      withCredentials: true,
+    });
     return data;
   },
 
-  // ===== Product images =====
   async uploadProductImages(files: File[]) {
-    const form = new FormData();
-    files.forEach((f) => form.append("images", f));
+    const fd = new FormData();
+    files.forEach((f) => fd.append("images", f));
 
-    const { data } = await api.post<{ message: string; urls: string[] }>(
-      "/api/upload/products",
-      form,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
-    return data;
+    const { data } = await api.post("/api/upload/products", fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+      withCredentials: true,
+    });
+
+    return data as { urls: string[]; files?: any[]; message?: string };
   },
 
   async deleteProductImageByUrl(url: string) {
-    const { data } = await api.delete("/api/upload/by-url", { data: { url } });
-    return data;
-  },
-
-  // (якщо треба — можна додати окремий список тільки product images)
-  async listProductImages() {
-    // якщо у бекенді нема цього маршруту — не використовуй
-    const { data } = await api.get<{ files: UploadListItem[] }>("/api/upload/products");
+    const { data } = await api.delete("/api/upload/by-url", {
+      data: { url },
+      withCredentials: true,
+    });
     return data;
   },
 };
+
+// ✅ backward-compat для твого коду
+export { uploadsApi as UploadsApi };
