@@ -5,7 +5,7 @@ import Button from "@/shared/ui/Button";
 import { AdminShell } from "@/admin/_ui/AdminShell";
 import { adminDeleteFile, adminRenameFile, adminUploadFile } from "@/admin/api/admin.api";
 import { UploadsApi } from "@/features/uploads/api/uploads.api";
-
+export { uploadsApi as UploadsApi };
 type UploadItem = {
   name: string;
   url: string;
@@ -228,3 +228,4 @@ export default function FilesManager() {
     </>
   );
 }
+
