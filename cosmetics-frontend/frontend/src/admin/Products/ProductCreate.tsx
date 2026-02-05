@@ -7,7 +7,7 @@ import Button from "@/shared/ui/Button";
 import { AdminShell, AdminRow } from "@/admin/_ui/AdminShell";
 import { adminCreateProduct, adminGetCategories, CategoryDTO } from "@/admin/api/admin.api";
 import { UploadsApi } from "@/features/uploads/api/uploads.api";
-export { uploadsApi as UploadsApi };
+
 const MAX_IMAGES = 10;
 
 export default function ProductCreate() {
@@ -184,4 +184,5 @@ export default function ProductCreate() {
     </>
   );
 }
+
 
