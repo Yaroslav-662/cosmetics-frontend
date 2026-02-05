@@ -91,10 +91,7 @@ export async function adminDeleteProductImageByUrl(url: string) {
   return data;
 }
 
-export async function adminGetFiles() {
-  const { data } = await api.get("/upload");
-  return Array.isArray(data?.files) ? data.files : [];
-}
+
 
 
 // CATEGORIES
@@ -240,6 +237,7 @@ export async function adminRenameFile(oldName: string, newName: string) {
   const { data } = await api.put("/api/upload/rename", { oldName, newName }, { withCredentials: true });
   return data;
 }
+
 
 
 
