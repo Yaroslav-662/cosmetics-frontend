@@ -30,6 +30,7 @@ import RedeemPage from "@/pages/Info/RedeemPage";
 import AffiliatesPage from "@/pages/Info/AffiliatesPage";
 import InvestorsPage from "@/pages/Info/InvestorsPage";
 import VerifyEmailPage from "@/pages/Auth/VerifyEmailPage";
+import ProductDetailsPage from "@/pages/Product/ProductDetailsPage";
 // ✅ named export
 import { ReviewsPage } from "@/features/reviews/pages/ReviewsPage";
 
@@ -66,5 +67,7 @@ export const GuestRoutes = (
     <Route path="/redeem" element={<RedeemPage />} />
     <Route path="/affiliates" element={<AffiliatesPage />} />
     <Route path="/investors" element={<InvestorsPage />} />
+    <Route path="/investors" element={<ProductDetailsPage />} />
   </Route>
 );
+
