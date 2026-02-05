@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from "react";
 import Button from "@/shared/ui/Button";
 import type { CreateProductDto, Product } from "../model/product.types";
-import { adminDeleteProductByUrl, adminUploadProductImages } from "@/admin/api/upload.api";
+import { uploadsApi } from "@/features/uploads/api/uploads.api";
+
 
 interface Props {
   initial?: Product;
@@ -32,7 +33,7 @@ export const ProductForm: React.FC<Props> = ({ initial, onSubmit }) => {
 
     setBusy(true);
     try {
-      const res = await adminUploadProductImages(picked);
+      const res = await uploadsApi.uploadProductImages(picked);
       setImages((p) => [...p, ...res.urls]);
       setPicked([]);
     } catch (e: any) {
@@ -48,7 +49,7 @@ export const ProductForm: React.FC<Props> = ({ initial, onSubmit }) => {
     setBusy(true);
     setErr(null);
     try {
-      await adminDeleteProductByUrl(url);
+      await uploadsApi.deleteProductImageByUrl(url);
       setImages((p) => p.filter((x) => x !== url));
     } catch (e: any) {
       setErr(e?.response?.data?.message || e?.message || "Delete failed");
@@ -189,3 +190,4 @@ export const ProductForm: React.FC<Props> = ({ initial, onSubmit }) => {
     </form>
   );
 };
+
