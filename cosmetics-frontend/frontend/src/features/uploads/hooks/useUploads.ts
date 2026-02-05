@@ -1,7 +1,7 @@
 // src/features/uploads/hooks/useUploads.ts
 
 import { create } from "zustand";
-import { UploadsApi } from "../api/uploads.api";
+import { UploadsApi } from "@/features/uploads/api/uploads.api";
 import type { UploadedFile, RenamePayload } from "../model/upload.types";
 
 interface UploadsState {
@@ -69,3 +69,4 @@ export const useUploads = create<UploadsState>((set, get) => ({
     }
   },
 }));
+
