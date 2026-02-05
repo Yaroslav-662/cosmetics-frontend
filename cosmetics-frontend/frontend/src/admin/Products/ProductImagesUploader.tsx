@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from "react";
 import Button from "@/shared/ui/Button";
 import Input from "@/shared/ui/Input";
-import { adminDeleteProductByUrl, adminUploadProductImages } from "@/admin/api/upload.api";
+import { uploadsApi } from "@/features/uploads/api/uploads.api";
+
 
 type Props = {
   value: string[];               // поточні url фото (з форми товару)
@@ -27,7 +28,7 @@ export function ProductImagesUploader({ value, onChange, max = 10 }: Props) {
 
     setBusy(true);
     try {
-      const res = await adminUploadProductImages(picked);
+      const res = await uploadsApi.uploadProductImages(files);
       onChange([...value, ...res.urls]);
       setPicked([]);
     } catch (e: any) {
@@ -44,7 +45,7 @@ export function ProductImagesUploader({ value, onChange, max = 10 }: Props) {
     setErr(null);
     try {
       // видаляє файл з uploads/products по URL
-      await adminDeleteProductByUrl(url);
+      await uploadsApi.deleteProductImageByUrl(url);
       onChange(value.filter((x) => x !== url));
     } catch (e: any) {
       setErr(e?.response?.data?.message || e?.message || "Delete failed");
