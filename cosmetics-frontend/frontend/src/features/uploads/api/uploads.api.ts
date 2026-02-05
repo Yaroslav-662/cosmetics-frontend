@@ -1,43 +1,61 @@
 import { api } from "@/shared/api/api";
 
-type UploadListItem = {
+export type UploadListItem = {
   name: string;
+  size: number;
+  createdAt: string;
   url: string;
-  size?: number;
-  createdAt?: string;
-  isDir?: boolean;
 };
 
-function safeFiles(data: any): UploadListItem[] {
-  const files = data?.files;
-  return Array.isArray(files) ? files : [];
-}
-
-export const UploadsApi = {
-  async listAll() {
-    const { data } = await api.get("/upload");
-    return { files: safeFiles(data) };
+export const uploadsApi = {
+  // ===== Admin files =====
+  async getFiles() {
+    const { data } = await api.get<{ files: UploadListItem[] }>("/api/upload");
+    return data;
   },
 
-  async listProductImages() {
-    const { data } = await api.get("/upload/products");
-    return { files: safeFiles(data) };
-  },
+  async uploadFile(file: File) {
+    const form = new FormData();
+    form.append("file", file);
 
-  async uploadProductImages(files: File[]) {
-    const fd = new FormData();
-    files.forEach((f) => fd.append("images", f));
-
-    const { data } = await api.post("/upload/products", fd, {
+    const { data } = await api.post("/api/upload/file", form, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+    return data;
+  },
 
-    const urls = Array.isArray(data?.urls) ? data.urls : [];
-    return { urls, raw: data };
+  async deleteFile(name: string) {
+    const { data } = await api.delete(`/api/upload/${encodeURIComponent(name)}`);
+    return data;
+  },
+
+  async renameFile(oldName: string, newName: string) {
+    const { data } = await api.put("/api/upload/rename", { oldName, newName });
+    return data;
+  },
+
+  // ===== Product images =====
+  async uploadProductImages(files: File[]) {
+    const form = new FormData();
+    files.forEach((f) => form.append("images", f));
+
+    const { data } = await api.post<{ message: string; urls: string[] }>(
+      "/api/upload/products",
+      form,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+    return data;
   },
 
   async deleteProductImageByUrl(url: string) {
-    const { data } = await api.delete("/upload/by-url", { data: { url } });
+    const { data } = await api.delete("/api/upload/by-url", { data: { url } });
+    return data;
+  },
+
+  // (якщо треба — можна додати окремий список тільки product images)
+  async listProductImages() {
+    // якщо у бекенді нема цього маршруту — не використовуй
+    const { data } = await api.get<{ files: UploadListItem[] }>("/api/upload/products");
     return data;
   },
 };
