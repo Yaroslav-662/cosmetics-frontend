@@ -33,7 +33,7 @@ export default function ProductCreate() {
 
   const canAdd = form.images.length < MAX_IMAGES;
 
-  const pick = () => {
+  const pickFiles = () => {
     if (!canAdd) return alert(`Максимум ${MAX_IMAGES} фото`);
     fileRef.current?.click();
   };
@@ -52,7 +52,9 @@ export default function ProductCreate() {
     setUploading(true);
     try {
       const res = await UploadsApi.uploadProductImages(sliced);
-      if (!res.urls.length) return alert("Upload не повернув urls (перевір 401/токен).");
+      if (!res.urls || !Array.isArray(res.urls)) {
+        return alert("Upload не повернув urls (перевір токен або бекенд).");
+      }
       setForm((p) => ({ ...p, images: [...p.images, ...res.urls] }));
     } catch (err: any) {
       console.error(err);
@@ -63,12 +65,12 @@ export default function ProductCreate() {
   };
 
   const removeOne = async (url: string) => {
-    // optimistic
+    // оптимістичне видалення
     setForm((p) => ({ ...p, images: p.images.filter((x) => x !== url) }));
     try {
       await UploadsApi.deleteProductImageByUrl(url);
     } catch {
-      // не критично: файл може лишитися на сервері
+      // не критично, файл може залишитися на сервері
     }
   };
 
@@ -85,7 +87,7 @@ export default function ProductCreate() {
         stock: Number(form.stock || 0),
         category: form.category || undefined,
         description: form.description?.trim() || undefined,
-        images: form.images, // ✅ головне
+        images: form.images,
       });
       nav("/admin/products");
     } catch (err: any) {
@@ -132,13 +134,13 @@ export default function ProductCreate() {
             />
           </AdminRow>
 
-          {/* ✅ PHOTOS */}
+          {/* PHOTOS */}
           <AdminRow label={`Photos (${form.images.length}/${MAX_IMAGES})`}>
             <div className="space-y-3">
               <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={onFiles} />
 
               <div className="flex gap-2 flex-wrap items-center">
-                <Button variant="outline" onClick={pick} disabled={!canAdd || uploading}>
+                <Button variant="outline" onClick={pickFiles} disabled={!canAdd || uploading}>
                   {uploading ? "Uploading…" : "Add photos"}
                 </Button>
 
@@ -184,5 +186,3 @@ export default function ProductCreate() {
     </>
   );
 }
-
-
