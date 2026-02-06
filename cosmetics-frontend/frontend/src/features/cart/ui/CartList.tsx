@@ -1,20 +1,22 @@
 // src/features/cart/ui/CartList.tsx
 
-import React from "react";
 import { CartItem } from "./CartItem";
-import { useCart } from "../model/cart.store";
+import { useCartStore } from "../model/cart.store";
 
-export const CartList: React.FC = () => {
-  const items = useCart((s) => s.items);
+export const CartList = () => {
+  const items = useCartStore((s) => s.items);
 
-  if (!items.length)
-    return <p className="text-neutral-400">Кошик порожній</p>;
+  if (!items.length) {
+    return <p className="text-center">Кошик порожній 🛒</p>;
+  }
 
   return (
-    <div className="space-y-4">
-      {items.map((i) => (
-        <CartItem key={i.product._id} item={i} />
+    <div className="flex flex-col gap-4">
+      {items.map((item) => (
+        <CartItem key={item.id} item={item} />
       ))}
     </div>
   );
 };
+
+
