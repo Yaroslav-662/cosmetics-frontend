@@ -2,16 +2,26 @@
 
 import type { Product } from "@/features/products/model/product.types";
 
-export interface CartItem {
-  product: Product;
+export interface CartProduct {
+  id: string;
+  title: string;
+  price: number;
+  image: string;
+}
+
+export interface CartItem extends CartProduct {
   quantity: number;
 }
 
 export interface CartState {
   items: CartItem[];
-  add: (product: Product) => void;
-  remove: (id: string) => void;
-  increase: (id: string) => void;
-  decrease: (id: string) => void;
-  clear: () => void;
+  addToCart: (product: CartProduct) => void;
+  removeFromCart: (id: string) => void;
+  increaseQty: (id: string) => void;
+  decreaseQty: (id: string) => void;
+  clearCart: () => void;
+  totalPrice: () => number;
+  totalItems: () => number;
 }
+
+
