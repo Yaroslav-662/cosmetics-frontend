@@ -17,7 +17,7 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
 
   return (
     <div className="bg-neutral-900/60 border border-neutral-800 rounded-xl p-4 hover:border-amber-500/50 transition">
-      <Link to={`/products/${product._id}`} className="block">
+      <Link to={`/product/${product._id}`} className="block">
         <img src={cover} className="h-48 w-full object-cover rounded-lg mb-3" alt={product.name} />
         <h3 className="text-white font-semibold text-lg truncate">{product.name}</h3>
         <p className="text-neutral-400 text-sm line-clamp-2">{product.description}</p>
@@ -31,5 +31,6 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
     </div>
   );
 };
+
 
 
