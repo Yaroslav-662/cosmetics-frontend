@@ -1,132 +1,73 @@
 // src/pages/Checkout/CheckoutPage.tsx
 import React, { useMemo, useState } from "react";
-import { MetaTags } from "@/app/seo/MetaTags";
-import { useCartStore } from "@/store/cart.store";
-import { useAuthStore } from "@/store/auth.store";
-import { api } from "@/core/api/axios";
-import Input from "@/shared/ui/Input";
-import Select from "@/shared/ui/Select";
-import Button from "@/shared/ui/Button";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useCart } from "@/store/cart.store";
+import axios from "@/shared/api/axios";
 
-export default function CheckoutPage() {
-  const navigate = useNavigate();
-  const { user } = useAuthStore();
-  const cart = useCartStore();
+export const CheckoutPage = () => {
+  const { items, clear } = useCart();
 
-  const [address, setAddress] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "cash">("card");
-  const [loading, setLoading] = useState(false);
-
-  const canOrder = !!user; // за Swagger orders — авторизований
-
-  const itemsPayload = useMemo(
-    () => cart.items.map((i) => ({ product: i._id, quantity: i.quantity })),
-    [cart.items]
+  const total = items.reduce(
+    (sum, i) => sum + i.price * i.qty,
+    0
   );
 
-  async function createOrder() {
-    if (!canOrder) return;
-    const a = address.trim();
-    if (!a) return alert("Введіть адресу доставки");
-    if (!itemsPayload.length) return alert("Кошик порожній");
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    setLoading(true);
-    try {
-      await api.post("/api/orders", {
-        items: itemsPayload,
-        address: a,
-        paymentMethod,
-      });
+    await axios.post("/orders", {
+      items,
+      total,
+      customer: {
+        name: "Test User",
+        email: "test@mail.com",
+        address: "Kyiv",
+      },
+    });
 
-      cart.clear();
-      navigate("/orders");
-    } catch (e: any) {
-      alert(e?.response?.data?.message || "Не вдалося створити замовлення.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    clear();
+    alert("Order placed!");
+  };
 
   return (
-    <>
-      <MetaTags title="Checkout" />
+    <form
+      onSubmit={submit}
+      className="max-w-6xl mx-auto p-6 grid grid-cols-3 gap-8"
+    >
+      {/* LEFT */}
+      <div className="col-span-2 space-y-4">
+        <h2 className="text-xl font-bold">Billing details</h2>
 
-      <div className="max-w-3xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gold-300">Checkout</h1>
-          <p className="text-sm text-neutral-400">Оформлення замовлення через /api/orders.</p>
+        <input placeholder="Name" className="input" />
+        <input placeholder="Email" className="input" />
+        <input placeholder="Address" className="input" />
+      </div>
+
+      {/* RIGHT */}
+      <div className="border p-6 rounded-lg">
+        <h2 className="text-xl font-bold mb-4">Your order</h2>
+
+        {items.map((i) => (
+          <div key={i.id} className="flex justify-between">
+            <span>{i.title} × {i.qty}</span>
+            <span>${i.price * i.qty}</span>
+          </div>
+        ))}
+
+        <hr className="my-4" />
+
+        <div className="flex justify-between font-bold">
+          <span>Total</span>
+          <span>${total.toFixed(2)}</span>
         </div>
 
-        {!canOrder ? (
-          <div className="border border-neutral-800 bg-neutral-900/60 rounded-2xl p-6">
-            <div className="text-neutral-300 mb-3">Увійдіть, щоб оформити замовлення.</div>
-            <NavLink to="/auth/login" className="inline-block">
-              <Button>Увійти</Button>
-            </NavLink>
-          </div>
-        ) : (
-          <>
-            {/* ORDER SUMMARY */}
-            <div className="border border-neutral-800 bg-neutral-900/60 rounded-2xl p-6">
-              <div className="font-semibold text-white mb-4">Ваше замовлення</div>
-
-              {cart.items.length === 0 ? (
-                <div className="text-neutral-400">Кошик порожній.</div>
-              ) : (
-                <div className="space-y-3">
-                  {cart.items.map((i) => (
-                    <div key={i._id} className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={i.image || "https://placehold.co/64x64?text=Img"}
-                          alt={i.name}
-                          className="w-12 h-12 rounded-xl object-cover border border-neutral-800"
-                        />
-
-                        <div>
-                          <div className="text-neutral-100 text-sm font-semibold">{i.name}</div>
-                          <div className="text-neutral-400 text-xs">
-                            {i.quantity} × {i.price} ₴
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-white font-semibold">{i.price * i.quantity} ₴</div>
-                    </div>
-                  ))}
-
-                  <div className="pt-4 border-t border-neutral-800 flex items-center justify-between">
-                    <div className="text-neutral-300">Разом</div>
-                    <div className="text-white text-xl font-bold">{cart.total} ₴</div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* SHIPPING + PAYMENT */}
-            <div className="border border-neutral-800 bg-neutral-900/60 rounded-2xl p-6 space-y-4">
-              <div className="font-semibold text-white">Доставка</div>
-
-              <div>
-                <label className="text-xs text-neutral-400 block mb-1">Адреса</label>
-                <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Місто, вулиця, будинок…" />
-              </div>
-
-              <div>
-                <label className="text-xs text-neutral-400 block mb-1">Оплата</label>
-                <Select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value as any)}>
-                  <option value="card">Карткою</option>
-                  <option value="cash">Готівкою</option>
-                </Select>
-              </div>
-
-              <Button onClick={createOrder} disabled={loading || cart.items.length === 0}>
-                {loading ? "Створення…" : "Підтвердити замовлення"}
-              </Button>
-            </div>
-          </>
-        )}
+        <button
+          type="submit"
+          className="mt-6 w-full bg-black text-white py-3 rounded"
+        >
+          Place order
+        </button>
       </div>
-    </>
+    </form>
   );
-}
+};
+
