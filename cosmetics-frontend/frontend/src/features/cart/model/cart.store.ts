@@ -1,77 +1,86 @@
 // src/features/cart/model/cart.store.ts
+
 import { create } from "zustand";
-import { CartItem, CartProduct, CartState } from "./cart.types";
+import { persist } from "zustand/middleware";
+import { CartItem, AddToCartPayload } from "./cart.types";
 
-const STORAGE_KEY = "cart-storage";
+interface CartState {
+  items: CartItem[];
 
-const loadCart = (): CartItem[] => {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  } catch {
-    return [];
-  }
-};
+  addItem: (payload: AddToCartPayload) => void;
+  removeItem: (id: string) => void;
+  increaseQty: (id: string) => void;
+  decreaseQty: (id: string) => void;
+  clearCart: () => void;
 
-const saveCart = (items: CartItem[]) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-};
+  totalCount: () => number;
+  totalPrice: () => number;
+}
 
-export const useCartStore = create<CartState>((set, get) => ({
-  items: loadCart(),
+export const useCartStore = create<CartState>()(
+  persist(
+    (set, get) => ({
+      items: [],
 
-  addToCart: (product: CartProduct) =>
-    set((state) => {
-      const exists = state.items.find((i) => i.id === product.id);
+      addItem: (payload) =>
+        set((state) => {
+          const existing = state.items.find((i) => i.id === payload.id);
 
-      const items = exists
-        ? state.items.map((i) =>
-            i.id === product.id
-              ? { ...i, quantity: i.quantity + 1 }
-              : i
-          )
-        : [...state.items, { ...product, quantity: 1 }];
+          if (existing) {
+            return {
+              items: state.items.map((i) =>
+                i.id === payload.id
+                  ? { ...i, qty: i.qty + 1 }
+                  : i
+              ),
+            };
+          }
 
-      saveCart(items);
-      return { items };
+          return {
+            items: [
+              ...state.items,
+              {
+                ...payload,
+                qty: 1,
+              },
+            ],
+          };
+        }),
+
+      removeItem: (id) =>
+        set((state) => ({
+          items: state.items.filter((i) => i.id !== id),
+        })),
+
+      increaseQty: (id) =>
+        set((state) => ({
+          items: state.items.map((i) =>
+            i.id === id ? { ...i, qty: i.qty + 1 } : i
+          ),
+        })),
+
+      decreaseQty: (id) =>
+        set((state) => ({
+          items: state.items
+            .map((i) =>
+              i.id === id ? { ...i, qty: i.qty - 1 } : i
+            )
+            .filter((i) => i.qty > 0),
+        })),
+
+      clearCart: () => set({ items: [] }),
+
+      totalCount: () =>
+        get().items.reduce((sum, i) => sum + i.qty, 0),
+
+      totalPrice: () =>
+        get().items.reduce(
+          (sum, i) => sum + i.price * i.qty,
+          0
+        ),
     }),
-
-  removeFromCart: (id) =>
-    set((state) => {
-      const items = state.items.filter((i) => i.id !== id);
-      saveCart(items);
-      return { items };
-    }),
-
-  increaseQty: (id) =>
-    set((state) => {
-      const items = state.items.map((i) =>
-        i.id === id ? { ...i, quantity: i.quantity + 1 } : i
-      );
-      saveCart(items);
-      return { items };
-    }),
-
-  decreaseQty: (id) =>
-    set((state) => {
-      const items = state.items
-        .map((i) =>
-          i.id === id ? { ...i, quantity: i.quantity - 1 } : i
-        )
-        .filter((i) => i.quantity > 0);
-
-      saveCart(items);
-      return { items };
-    }),
-
-  clearCart: () => {
-    saveCart([]);
-    set({ items: [] });
-  },
-
-  totalPrice: () =>
-    get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
-
-  totalItems: () =>
-    get().items.reduce((sum, i) => sum + i.quantity, 0),
-}));
-
+    {
+      name: "cart-storage", // localStorage
+    }
+  )
+);
