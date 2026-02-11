@@ -1,0 +1,1027 @@
+ Volume in drive C has no label.
+ Volume Serial Number is 2ADB-078C
+
+ Directory of C:\Users\Anonim\cosmetics-frontend
+
+13.12.2025  19:56    <DIR>          .
+13.12.2025  19:56    <DIR>          ..
+13.12.2025  18:59    <DIR>          frontend
+13.12.2025  19:56                 0 структура_список.txt
+               1 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend
+
+13.12.2025  18:59    <DIR>          .
+13.12.2025  18:59    <DIR>          ..
+11.12.2025  16:48               143 .evn
+13.12.2025  04:50             1 096 index.html
+12.12.2025  03:04    <DIR>          node_modules
+12.12.2025  03:04           151 878 package-lock.json
+13.12.2025  03:52             1 231 package.json
+11.12.2025  16:14                85 postcss.config.js
+11.12.2025  16:37    <DIR>          public
+11.12.2025  16:14               768 README.md
+13.12.2025  04:54    <DIR>          src
+11.12.2025  16:14               628 tailwind.config.js
+11.12.2025  16:14               473 tsconfig.json
+11.12.2025  16:14               411 tsconfig.paths.json
+11.12.2025  16:14               900 vite.config.ts
+              10 File(s)        157 613 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\public
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  01:49                 0 apple-touch-icon.png
+11.12.2025  01:49                 0 favicon.png
+11.12.2025  16:37    <DIR>          icons
+11.12.2025  16:14             1 450 manifest.json
+11.12.2025  16:14               199 robots.txt
+11.12.2025  16:14               896 sw.js
+               5 File(s)          2 545 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\public\icons
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  01:49                 0 icon-192.png
+11.12.2025  01:49                 0 icon-512.png
+11.12.2025  01:49                 0 maskable.png
+               3 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src
+
+13.12.2025  04:54    <DIR>          .
+13.12.2025  04:54    <DIR>          ..
+11.12.2025  16:37    <DIR>          admin
+11.12.2025  16:37    <DIR>          analytics
+11.12.2025  16:37    <DIR>          app
+13.12.2025  04:58               250 App.tsx
+11.12.2025  16:37    <DIR>          assets
+11.12.2025  16:37    <DIR>          core
+12.12.2025  23:49               322 env.d.ts
+11.12.2025  16:37    <DIR>          error-monitoring
+11.12.2025  16:37    <DIR>          features
+12.12.2025  15:43    <DIR>          hooks
+11.12.2025  16:37    <DIR>          i18n
+13.12.2025  03:57             2 044 index.css
+13.12.2025  04:59               338 main.tsx
+11.12.2025  16:37    <DIR>          pages
+11.12.2025  16:37    <DIR>          pwa
+12.12.2025  02:13    <DIR>          shared
+11.12.2025  16:37    <DIR>          sockets
+11.12.2025  16:37    <DIR>          store
+11.12.2025  20:34    <DIR>          widgets
+               4 File(s)          2 954 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\admin
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          Categories
+11.12.2025  16:37    <DIR>          Dashboard
+11.12.2025  16:37    <DIR>          Files
+12.12.2025  22:24    <DIR>          Orders
+11.12.2025  16:37    <DIR>          Products
+11.12.2025  16:37    <DIR>          Reviews
+11.12.2025  16:37    <DIR>          Users
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\admin\Categories
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  23:49             2 320 CategoriesList.tsx
+12.12.2025  23:49               980 CategoryCreate.tsx
+12.12.2025  23:49             1 736 CategoryEdit.tsx
+               3 File(s)          5 036 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\admin\Dashboard
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  23:49             1 330 DashboardPage.tsx
+               1 File(s)          1 330 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\admin\Files
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  01:59             2 321 FilesManager.tsx
+               1 File(s)          2 321 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\admin\Orders
+
+12.12.2025  22:24    <DIR>          .
+12.12.2025  22:24    <DIR>          ..
+12.12.2025  23:49             1 483 OrderDetails.tsx
+12.12.2025  23:49             1 628 OrdersList.tsx
+12.12.2025  23:49               411 OrdersPage.tsx
+               3 File(s)          3 522 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\admin\Products
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  23:49             1 151 ProductCreate.tsx
+12.12.2025  23:49             1 770 ProductEdit.tsx
+12.12.2025  23:49             3 046 ProductsList.tsx
+               3 File(s)          5 967 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\admin\Reviews
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  23:49             1 986 ReviewsAdmin.tsx
+               1 File(s)          1 986 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\admin\Users
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  23:49             2 562 UserEdit.tsx
+12.12.2025  23:49             2 435 UsersList.tsx
+               2 File(s)          4 997 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\analytics
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  23:59             1 489 google.ts
+               1 File(s)          1 489 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\app
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  23:49               815 App.tsx
+11.12.2025  04:13               344 index.tsx
+11.12.2025  16:37    <DIR>          layouts
+11.12.2025  16:37    <DIR>          providers
+11.12.2025  16:37    <DIR>          router
+11.12.2025  16:37    <DIR>          seo
+               2 File(s)          1 159 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\app\layouts
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  23:49               698 AdminLayout.tsx
+12.12.2025  23:49               463 GuestLayout.tsx
+12.12.2025  23:49               603 UserLayout.tsx
+               3 File(s)          1 764 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\app\providers
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  04:13             1 224 AuthProvider.tsx
+12.12.2025  23:49             1 222 I18nProvider.tsx
+11.12.2025  04:13             1 569 NotificationProvider.tsx
+11.12.2025  04:13               533 QueryProvider.tsx
+13.12.2025  01:36             1 885 SocketProvider.tsx
+11.12.2025  04:13             1 396 ThemeProvider.tsx
+               6 File(s)          7 829 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\app\router
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  23:49               444 AdminRoute.tsx
+12.12.2025  23:49             1 915 AdminRoutes.tsx
+12.12.2025  23:49               839 GuestRoutes.tsx
+12.12.2025  23:49               412 ProtectedRoute.tsx
+11.12.2025  04:13               350 RoleRouter.tsx
+12.12.2025  23:49               336 RootRoutes.tsx
+12.12.2025  23:49               789 UserRoutes.tsx
+               7 File(s)          5 085 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\app\seo
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15             1 616 MetaTags.tsx
+11.12.2025  16:15             1 390 OpenGraph.tsx
+11.12.2025  16:14               650 SeoConfig.ts
+               3 File(s)          3 656 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\assets
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          images
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\assets\images
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  01:49    <DIR>          banners
+11.12.2025  01:49    <DIR>          products
+11.12.2025  01:49    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\assets\images\banners
+
+11.12.2025  01:49    <DIR>          .
+11.12.2025  01:49    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\assets\images\products
+
+11.12.2025  01:49    <DIR>          .
+11.12.2025  01:49    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\assets\images\ui
+
+11.12.2025  01:49    <DIR>          .
+11.12.2025  01:49    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\core
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          api
+11.12.2025  16:37    <DIR>          auth
+11.12.2025  16:37    <DIR>          config
+11.12.2025  16:37    <DIR>          types
+11.12.2025  16:37    <DIR>          utils
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\core\api
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  03:05               239 axios.ts
+11.12.2025  04:13               274 errorHandler.ts
+12.12.2025  03:05               614 interceptors.ts
+               3 File(s)          1 127 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\core\auth
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  03:05               682 tokenStore.ts
+               1 File(s)            682 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\core\config
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  04:13               366 constants.ts
+12.12.2025  23:49               268 env.ts
+               2 File(s)            634 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\core\types
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  04:13                92 api.types.ts
+11.12.2025  04:13                87 common.types.ts
+11.12.2025  04:13                63 index.ts
+               3 File(s)            242 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\core\utils
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          files
+11.12.2025  16:37    <DIR>          format
+11.12.2025  04:13               182 helpers.ts
+11.12.2025  04:13               237 validators.ts
+               2 File(s)            419 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\core\utils\files
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  04:13               269 imageUpload.ts
+11.12.2025  04:13                79 mimeTypes.ts
+               2 File(s)            348 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\core\utils\format
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  04:13               208 date.ts
+11.12.2025  04:13               118 phone.ts
+11.12.2025  04:13               150 price.ts
+               3 File(s)            476 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\error-monitoring
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               459 sentry.ts
+               1 File(s)            459 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          auth
+11.12.2025  16:37    <DIR>          cart
+11.12.2025  16:37    <DIR>          categories
+11.12.2025  16:37    <DIR>          dashboard
+11.12.2025  16:37    <DIR>          orders
+11.12.2025  16:37    <DIR>          products
+11.12.2025  16:37    <DIR>          reviews
+11.12.2025  16:37    <DIR>          uploads
+11.12.2025  16:37    <DIR>          users
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\auth
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          api
+11.12.2025  16:37    <DIR>          hooks
+11.12.2025  16:37    <DIR>          model
+11.12.2025  16:37    <DIR>          pages
+11.12.2025  16:37    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\auth\api
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  03:35             2 918 auth.api.ts
+               1 File(s)          2 918 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\auth\hooks
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  02:30               671 useAuth.ts
+               1 File(s)            671 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\auth\model
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  02:30             3 251 auth.store.ts
+11.12.2025  16:15               974 auth.types.ts
+               2 File(s)          4 225 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\auth\pages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               391 ForgotPasswordPage.tsx
+11.12.2025  16:15               933 LoginPage.tsx
+11.12.2025  16:15               691 RegisterPage.tsx
+12.12.2025  00:57               781 ResetPasswordPage.tsx
+11.12.2025  16:15             2 743 VerifyEmailPage.tsx
+               5 File(s)          5 539 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\auth\ui
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  00:57             2 730 ForgotPasswordForm.tsx
+12.12.2025  00:57             3 210 LoginForm.tsx
+12.12.2025  00:57             3 385 RegisterForm.tsx
+13.12.2025  00:34             3 080 ResetPasswordForm.tsx
+12.12.2025  00:57             4 585 TwoFactorForm.tsx
+11.12.2025  16:15             1 044 VerifyEmailMessage.tsx
+               6 File(s)         18 034 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\cart
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          model
+11.12.2025  16:37    <DIR>          pages
+11.12.2025  16:37    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\cart\model
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15             1 123 cart.store.ts
+11.12.2025  16:15               411 cart.types.ts
+               2 File(s)          1 534 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\cart\pages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  00:57             1 081 CartPage.tsx
+               1 File(s)          1 081 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\cart\ui
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  00:34             1 437 CartItem.tsx
+11.12.2025  16:15               502 CartList.tsx
+               2 File(s)          1 939 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\categories
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          api
+11.12.2025  16:37    <DIR>          hooks
+11.12.2025  16:37    <DIR>          model
+11.12.2025  16:37    <DIR>          pages
+11.12.2025  16:37    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\categories\api
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               932 categories.api.ts
+               1 File(s)            932 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\categories\hooks
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15             2 788 useCategories.ts
+               1 File(s)          2 788 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\categories\model
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  23:49               349 category.types.ts
+               1 File(s)            349 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\categories\pages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15             1 311 CategoriesListPage.tsx
+13.12.2025  00:34             3 726 CategoriesPage.tsx
+13.12.2025  00:34             1 004 CategoryEditPage.tsx
+               3 File(s)          6 041 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\categories\ui
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  00:34             1 954 CategoryForm.tsx
+11.12.2025  16:15               857 CategorySelect.tsx
+               2 File(s)          2 811 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\dashboard
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          hooks
+11.12.2025  16:37    <DIR>          pages
+11.12.2025  16:37    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\dashboard\hooks
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               351 useDashboard.ts
+11.12.2025  16:15             1 379 useDashboardStats.ts
+               2 File(s)          1 730 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\dashboard\pages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               690 DashboardPage.tsx
+               1 File(s)            690 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\dashboard\ui
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               630 AnalyticsChart.tsx
+11.12.2025  16:15               978 DashboardStats.tsx
+               2 File(s)          1 608 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\orders
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          api
+11.12.2025  16:37    <DIR>          hooks
+11.12.2025  16:37    <DIR>          model
+11.12.2025  16:37    <DIR>          pages
+11.12.2025  16:37    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\orders\api
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               681 orders.api.ts
+               1 File(s)            681 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\orders\hooks
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  00:34             1 249 useOrderRealtime.ts
+13.12.2025  00:34             1 707 useOrders.ts
+               2 File(s)          2 956 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\orders\model
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               835 order.types.ts
+               1 File(s)            835 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\orders\pages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  23:49               797 OrdersPage.tsx
+11.12.2025  16:15             1 399 RealtimeOrdersPage.tsx
+               2 File(s)          2 196 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\orders\ui
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15             1 464 OrderList.tsx
+12.12.2025  00:57             1 272 OrderStatusBadge.tsx
+13.12.2025  00:34             2 977 OrderTable.tsx
+               3 File(s)          5 713 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\products
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          api
+11.12.2025  16:37    <DIR>          hooks
+11.12.2025  16:37    <DIR>          model
+11.12.2025  16:37    <DIR>          pages
+11.12.2025  16:37    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\products\api
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               945 products.api.ts
+               1 File(s)            945 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\products\hooks
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15             2 187 useProducts.ts
+               1 File(s)          2 187 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\products\model
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               478 product.types.ts
+               1 File(s)            478 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\products\pages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               701 ProductCreatePage.tsx
+11.12.2025  16:15               863 ProductEditPage.tsx
+12.12.2025  00:57             1 223 ProductPage.tsx
+11.12.2025  16:15               531 ProductsPage.tsx
+               4 File(s)          3 318 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\products\ui
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  00:57             1 155 ProductCard.tsx
+12.12.2025  23:49             2 861 ProductForm.tsx
+11.12.2025  16:15               592 ProductGrid.tsx
+               3 File(s)          4 608 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\reviews
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          api
+11.12.2025  16:37    <DIR>          hooks
+11.12.2025  16:37    <DIR>          model
+11.12.2025  16:37    <DIR>          pages
+11.12.2025  16:37    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\reviews\api
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               677 reviews.api.ts
+               1 File(s)            677 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\reviews\hooks
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15             1 637 useReviews.ts
+               1 File(s)          1 637 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\reviews\model
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               339 review.types.ts
+               1 File(s)            339 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\reviews\pages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               950 ReviewsPage.tsx
+               1 File(s)            950 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\reviews\ui
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  00:57             2 392 ReviewForm.tsx
+13.12.2025  00:34             1 648 ReviewList.tsx
+               2 File(s)          4 040 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\uploads
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          api
+11.12.2025  16:37    <DIR>          hooks
+11.12.2025  16:37    <DIR>          model
+11.12.2025  16:37    <DIR>          pages
+11.12.2025  16:37    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\uploads\api
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               883 uploads.api.ts
+               1 File(s)            883 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\uploads\hooks
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15             1 931 useUploads.ts
+               1 File(s)          1 931 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\uploads\model
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               238 upload.types.ts
+               1 File(s)            238 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\uploads\pages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  00:57             1 999 UploadsPage.tsx
+               1 File(s)          1 999 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\uploads\ui
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  00:57               813 FileUploader.tsx
+11.12.2025  16:15               953 UploadButton.tsx
+               2 File(s)          1 766 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\users
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          api
+11.12.2025  16:37    <DIR>          hooks
+11.12.2025  16:37    <DIR>          model
+11.12.2025  16:37    <DIR>          pages
+11.12.2025  16:37    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\users\api
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15             2 230 users.api.ts
+               1 File(s)          2 230 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\users\hooks
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15             3 036 useUserProfile.ts
+11.12.2025  16:15             2 280 useUsersAdmin.ts
+               2 File(s)          5 316 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\users\model
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               657 user.types.ts
+               1 File(s)            657 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\users\pages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  00:57             3 087 ProfilePage.tsx
+11.12.2025  16:15             1 829 UserEditPage.tsx
+13.12.2025  00:34             5 022 UsersListPage.tsx
+               3 File(s)          9 938 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\features\users\ui
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  00:57             2 102 UserProfileForm.tsx
+12.12.2025  01:11               652 UserRoleSelect.tsx
+               2 File(s)          2 754 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\hooks
+
+12.12.2025  15:43    <DIR>          .
+12.12.2025  15:43    <DIR>          ..
+13.12.2025  01:01               880 useAuth.ts
+12.12.2025  15:55               182 useCategories.ts
+11.12.2025  16:36               469 useClickOutside.ts
+11.12.2025  16:36               338 useDebounce.ts
+12.12.2025  15:55               158 useOrders.ts
+11.12.2025  16:36               355 usePagination.ts
+13.12.2025  01:01               188 useProducts.ts
+13.12.2025  01:01               182 useReviews.ts
+11.12.2025  16:36               314 useTheme.ts
+               9 File(s)          3 066 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\i18n
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:14               588 config.ts
+11.12.2025  16:37    <DIR>          messages
+               1 File(s)            588 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\i18n\messages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               747 en.json
+11.12.2025  16:14             1 041 ua.json
+               2 File(s)          1 788 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\pages
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:37    <DIR>          Account
+11.12.2025  16:37    <DIR>          Auth
+11.12.2025  16:37    <DIR>          Cart
+11.12.2025  16:37    <DIR>          Checkout
+11.12.2025  16:37    <DIR>          Home
+11.12.2025  16:37    <DIR>          NotFound
+11.12.2025  16:37    <DIR>          Product
+11.12.2025  16:37    <DIR>          Shop
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\pages\Account
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  01:35               364 ProfilePage.tsx
+               1 File(s)            364 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\pages\Auth
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:15               332 LoginPage.tsx
+11.12.2025  16:15               362 RegisterPage.tsx
+               2 File(s)            694 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\pages\Cart
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  01:35             2 818 CartPage.tsx
+               1 File(s)          2 818 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\pages\Checkout
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  01:35             4 186 CheckoutPage.tsx
+               1 File(s)          4 186 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\pages\Home
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  01:35             2 697 HomePage.tsx
+               1 File(s)          2 697 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\pages\NotFound
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+12.12.2025  02:37               947 NotFound.tsx
+               1 File(s)            947 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\pages\Product
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  01:35             3 454 ProductPage.tsx
+               1 File(s)          3 454 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\pages\Shop
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  01:35             4 231 ShopPage.tsx
+               1 File(s)          4 231 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\pwa
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  16:14               899 register-sw.ts
+               1 File(s)            899 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\shared
+
+12.12.2025  02:13    <DIR>          .
+12.12.2025  02:13    <DIR>          ..
+11.12.2025  16:37    <DIR>          animations
+13.12.2025  02:27    <DIR>          charts
+12.12.2025  02:14    <DIR>          lib
+12.12.2025  00:24    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\shared\animations
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  03:30               228 FadeIn.tsx
+               1 File(s)            228 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\shared\charts
+
+13.12.2025  02:27    <DIR>          .
+13.12.2025  02:27    <DIR>          ..
+13.12.2025  02:34               498 BarChart.tsx
+13.12.2025  02:30               653 LineChart.tsx
+13.12.2025  02:34               669 PieChart.tsx
+13.12.2025  02:34                92 types.ts
+               4 File(s)          1 912 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\shared\lib
+
+12.12.2025  02:14    <DIR>          .
+12.12.2025  02:14    <DIR>          ..
+12.12.2025  02:14               122 cn.ts
+               1 File(s)            122 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\shared\ui
+
+12.12.2025  00:24    <DIR>          .
+12.12.2025  00:24    <DIR>          ..
+12.12.2025  16:10               710 Badge.tsx
+12.12.2025  16:10             1 292 Button.tsx
+12.12.2025  03:35               290 Card.tsx
+12.12.2025  16:10               399 Input.tsx
+12.12.2025  00:30               236 Loader.tsx
+11.12.2025  04:13               797 Modal.tsx
+12.12.2025  01:59               573 Pagination.tsx
+12.12.2025  02:37               608 Select.tsx
+11.12.2025  04:13               158 Skeleton.tsx
+12.12.2025  00:30               776 Table.tsx
+12.12.2025  00:36               362 Tooltip.tsx
+              11 File(s)          6 201 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\sockets
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  03:09             2 070 ws-events.ts
+               1 File(s)          2 070 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\store
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  03:09             1 853 auth.store.ts
+11.12.2025  04:13             1 952 cart.store.ts
+11.12.2025  04:13             1 607 notifications.store.ts
+13.12.2025  01:01               270 ui.store.ts
+               4 File(s)          5 682 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets
+
+11.12.2025  20:34    <DIR>          .
+11.12.2025  20:34    <DIR>          ..
+11.12.2025  16:37    <DIR>          Breadcrumbs
+11.12.2025  16:37    <DIR>          CartMini
+11.12.2025  16:37    <DIR>          DataTable
+13.12.2025  03:06    <DIR>          Filters
+11.12.2025  16:37    <DIR>          Footer
+11.12.2025  16:37    <DIR>          Navbar
+11.12.2025  16:37    <DIR>          ProductCard
+11.12.2025  16:37    <DIR>          ProductGrid
+11.12.2025  16:37    <DIR>          Sidebar
+11.12.2025  16:37    <DIR>          Topbar
+11.12.2025  20:46    <DIR>          ui
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\Breadcrumbs
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  03:09               741 Breadcrumbs.tsx
+               1 File(s)            741 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\CartMini
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  04:13               491 CartMini.tsx
+               1 File(s)            491 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\DataTable
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  03:09             1 215 DataTable.tsx
+               1 File(s)          1 215 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\Filters
+
+13.12.2025  03:06    <DIR>          .
+13.12.2025  03:06    <DIR>          ..
+13.12.2025  03:30             4 572 Filters.tsx
+13.12.2025  03:30               214 filters.types.ts
+               2 File(s)          4 786 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\Footer
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  04:13               329 Footer.tsx
+               1 File(s)            329 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\Navbar
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  04:13               995 Navbar.tsx
+11.12.2025  04:13             1 715 UserMenu.tsx
+               2 File(s)          2 710 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\ProductCard
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  03:30             1 469 ProductCard.tsx
+               1 File(s)          1 469 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\ProductGrid
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+13.12.2025  03:30               278 ProductGrid.tsx
+               1 File(s)            278 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\Sidebar
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  04:13             1 210 AdminSidebar.tsx
+11.12.2025  04:13               643 UserSidebar.tsx
+               2 File(s)          1 853 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\Topbar
+
+11.12.2025  16:37    <DIR>          .
+11.12.2025  16:37    <DIR>          ..
+11.12.2025  04:13               256 AdminTopbar.tsx
+               1 File(s)            256 bytes
+
+ Directory of C:\Users\Anonim\cosmetics-frontend\frontend\src\widgets\ui
+
+11.12.2025  20:46    <DIR>          .
+11.12.2025  20:46    <DIR>          ..
+11.12.2025  23:59               600 WidgetCard.tsx
+11.12.2025  23:59               592 WidgetContainer.tsx
+13.12.2025  03:30               813 WidgetSection.tsx
+               3 File(s)          2 005 bytes
+
+     Total Files Listed:
+           16875 File(s)    166 787 668 bytes
+            4418 Dir(s)  442 899 460 096 bytes free
