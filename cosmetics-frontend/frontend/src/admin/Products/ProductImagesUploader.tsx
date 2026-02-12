@@ -1,3 +1,4 @@
+// src/features/products/ui/ProductImagesUploader.tsx
 import React, { useState } from "react";
 import Button from "@/shared/ui/Button";
 import { UploadsApi } from "@/features/uploads/api/uploads.api";
@@ -13,8 +14,9 @@ export const ProductImagesUploader: React.FC<Props> = ({ value, onChange }) => {
   async function onUpload(file: File) {
     setLoading(true);
     try {
-      const res = await UploadsApi.uploadProductImage(file);
-      onChange([...value, res.url]);
+      // ✅ Викликаємо правильний метод для завантаження одного файлу
+      const res = await UploadsApi.uploadProductImages([file]);
+      onChange([...value, ...(res.urls || [])]);
     } finally {
       setLoading(false);
     }
@@ -38,10 +40,7 @@ export const ProductImagesUploader: React.FC<Props> = ({ value, onChange }) => {
       <div className="grid grid-cols-3 gap-3">
         {value.map((img) => (
           <div key={img} className="relative">
-            <img
-              src={img}
-              className="h-32 w-full object-cover rounded-lg"
-            />
+            <img src={img} className="h-32 w-full object-cover rounded-lg" />
             <button
               type="button"
               onClick={() => remove(img)}

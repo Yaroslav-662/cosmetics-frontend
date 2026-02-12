@@ -1,23 +1,22 @@
+// src/features/products/pages/CreateProduct.tsx
 import React, { useEffect, useRef, useState } from "react";
-import { MetaTags } from "@/app/seo/MetaTags";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Input from "@/shared/ui/Input";
 import Select from "@/shared/ui/Select";
 import Button from "@/shared/ui/Button";
-import { AdminShell, AdminRow } from "@/admin/_ui/AdminShell";
-import { adminCreateProduct, adminGetCategories, CategoryDTO } from "@/admin/api/admin.api";
-import { UploadsApi } from "@/features/uploads/api/uploads.api";
+
+interface Category {
+  _id: string;
+  name: string;
+}
 
 const MAX_IMAGES = 10;
 
-export default function ProductCreate() {
+export default function CreateProduct() {
   const nav = useNavigate();
   const fileRef = useRef<HTMLInputElement | null>(null);
-
-  const [cats, setCats] = useState<CategoryDTO[]>([]);
-  const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-
+  const [categories, setCategories] = useState<Category[]>([]);
   const [form, setForm] = useState({
     name: "",
     price: 0,
@@ -26,163 +25,177 @@ export default function ProductCreate() {
     description: "",
     images: [] as string[],
   });
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
-    adminGetCategories().then(setCats).catch(() => setCats([]));
-  }, []);
+    // Завантажуємо список категорій
+    axios
+      .get("https://ecommerce-backend-mgfu.onrender.com/api/categories", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setCategories(res.data))
+      .catch(() => setCategories([]));
+  }, [token]);
 
-  const canAdd = form.images.length < MAX_IMAGES;
+  const pickFiles = () => fileRef.current?.click();
 
-  const pickFiles = () => {
-    if (!canAdd) return alert(`Максимум ${MAX_IMAGES} фото`);
-    fileRef.current?.click();
-  };
-
-  const onFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const list = e.target.files;
+  const uploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || !files.length) return;
     e.target.value = "";
-    if (!list?.length) return;
-
-    const files = Array.from(list).filter((f) => f.type.startsWith("image/"));
-    if (!files.length) return alert("Вибери зображення (jpg/png/webp/gif).");
 
     const free = MAX_IMAGES - form.images.length;
-    const sliced = files.slice(0, free);
+    const sliced = Array.from(files).slice(0, free);
+
+    const formData = new FormData();
+    sliced.forEach((f) => formData.append("images", f));
 
     setUploading(true);
     try {
-      const res = await UploadsApi.uploadProductImages(sliced);
-      if (!res.urls || !Array.isArray(res.urls)) {
-        return alert("Upload не повернув urls (перевір токен або бекенд).");
+      const res = await axios.post(
+        "https://ecommerce-backend-mgfu.onrender.com/api/upload/products",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (res.data.urls) {
+        setForm((p) => ({ ...p, images: [...p.images, ...res.data.urls] }));
       }
-      setForm((p) => ({ ...p, images: [...p.images, ...res.urls] }));
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      alert(err?.response?.data?.message || err?.message || "Upload error");
+      alert("Помилка завантаження фото");
     } finally {
       setUploading(false);
     }
   };
 
-  const removeOne = async (url: string) => {
-    // оптимістичне видалення
+  const removeImage = (url: string) => {
     setForm((p) => ({ ...p, images: p.images.filter((x) => x !== url) }));
-    try {
-      await UploadsApi.deleteProductImageByUrl(url);
-    } catch {
-      // не критично, файл може залишитися на сервері
-    }
   };
 
-  const onSave = async () => {
-    const name = form.name.trim();
-    if (!name) return alert("Name is required");
-    if (!Number.isFinite(form.price) || form.price <= 0) return alert("Price must be > 0");
+  const makeMain = (idx: number) => {
+    setForm((p) => {
+      const next = [...p.images];
+      const [u] = next.splice(idx, 1);
+      next.unshift(u);
+      return { ...p, images: next };
+    });
+  };
+
+  const saveProduct = async () => {
+    if (!form.name.trim()) return alert("Назва товару обов'язкова");
+    if (form.price <= 0) return alert("Ціна має бути > 0");
 
     setSaving(true);
     try {
-      await adminCreateProduct({
-        name,
-        price: Number(form.price),
-        stock: Number(form.stock || 0),
-        category: form.category || undefined,
-        description: form.description?.trim() || undefined,
-        images: form.images,
-      });
+      await axios.post(
+        "https://ecommerce-backend-mgfu.onrender.com/api/products",
+        form,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       nav("/admin/products");
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      alert(err?.response?.data?.message || err?.message || "Create failed");
+      alert("Помилка створення товару");
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <>
-      <MetaTags title="Admin — Create Product" />
-      <AdminShell
-        title="Create product"
-        subtitle="POST /api/products (name, price; optional: images[], category, description, stock)"
-        right={<Button variant="outline" onClick={() => nav(-1)}>Back</Button>}
+    <div className="max-w-2xl mx-auto p-4 space-y-4">
+      <h2 className="text-xl font-bold">Додати новий товар</h2>
+
+      <Input
+        placeholder="Назва"
+        value={form.name}
+        onChange={(e) => setForm({ ...form, name: e.target.value })}
+      />
+
+      <Input
+        type="number"
+        placeholder="Ціна"
+        value={String(form.price)}
+        onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+      />
+
+      <Input
+        type="number"
+        placeholder="Кількість на складі"
+        value={String(form.stock)}
+        onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
+      />
+
+      <Select
+        value={form.category}
+        onChange={(e) => setForm({ ...form, category: e.target.value })}
       >
-        <div className="space-y-4">
-          <AdminRow label="Name *">
-            <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          </AdminRow>
+        <option value="">— Виберіть категорію —</option>
+        {categories.map((c) => (
+          <option key={c._id} value={c._id}>
+            {c.name}
+          </option>
+        ))}
+      </Select>
 
-          <AdminRow label="Price *">
-            <Input type="number" value={String(form.price)} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} />
-          </AdminRow>
+      <textarea
+        placeholder="Опис"
+        value={form.description}
+        onChange={(e) => setForm({ ...form, description: e.target.value })}
+        className="w-full p-2 border rounded"
+      />
 
-          <AdminRow label="Stock">
-            <Input type="number" value={String(form.stock)} onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })} />
-          </AdminRow>
-
-          <AdminRow label="Category">
-            <Select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-              <option value="">— none —</option>
-              {cats.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
-            </Select>
-          </AdminRow>
-
-          <AdminRow label="Description">
-            <textarea
-              className="w-full rounded-lg bg-black/40 border border-neutral-800 p-3 text-sm text-white outline-none focus:border-neutral-600 min-h-[120px]"
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-            />
-          </AdminRow>
-
-          {/* PHOTOS */}
-          <AdminRow label={`Photos (${form.images.length}/${MAX_IMAGES})`}>
-            <div className="space-y-3">
-              <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={onFiles} />
-
-              <div className="flex gap-2 flex-wrap items-center">
-                <Button variant="outline" onClick={pickFiles} disabled={!canAdd || uploading}>
-                  {uploading ? "Uploading…" : "Add photos"}
-                </Button>
-
-                {form.images.length > 0 && (
-                  <Button variant="outline" onClick={() => setForm((p) => ({ ...p, images: [] }))} disabled={uploading}>
-                    Clear (local)
-                  </Button>
-                )}
-              </div>
-
-              {form.images.length === 0 ? (
-                <div className="text-sm text-neutral-500">Немає фото.</div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {form.images.map((url) => (
-                    <div key={url} className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950">
-                      <div className="aspect-square bg-black/30">
-                        <img src={url} className="w-full h-full object-cover" alt="" />
-                      </div>
-                      <div className="p-2 flex items-center justify-between gap-2">
-                        <div className="text-[10px] text-neutral-500 truncate" title={url}>{url}</div>
-                        <Button size="sm" variant="outline" onClick={() => removeOne(url)} disabled={uploading}>
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+      <div>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={uploadFiles}
+        />
+        <Button onClick={pickFiles} disabled={form.images.length >= MAX_IMAGES || uploading}>
+          {uploading ? "Завантаження..." : "Додати фото"}
+        </Button>
+        <div className="flex gap-2 mt-2 flex-wrap">
+          {form.images.map((url, i) => (
+            <div key={url} className="relative w-24 h-24 border rounded overflow-hidden">
+              <img src={url} alt="" className="w-full h-full object-cover" />
+              <button
+                onClick={() => removeImage(url)}
+                className="absolute top-0 right-0 bg-red-500 text-white px-1 text-xs"
+              >
+                X
+              </button>
+              {i !== 0 && (
+                <button
+                  onClick={() => makeMain(i)}
+                  className="absolute bottom-0 left-0 bg-yellow-400 text-black px-1 text-xs"
+                >
+                  Main
+                </button>
               )}
             </div>
-          </AdminRow>
-
-          <div className="pt-2 flex gap-2">
-            <Button onClick={onSave} disabled={saving || uploading}>
-              {saving ? "Saving…" : "Create"}
-            </Button>
-            <Button variant="outline" onClick={() => nav("/admin/products")} disabled={saving}>
-              Cancel
-            </Button>
-          </div>
+          ))}
         </div>
-      </AdminShell>
-    </>
+        <div className="text-xs mt-1">{form.images.length}/{MAX_IMAGES} фото</div>
+      </div>
+
+      <div className="flex gap-2 mt-4">
+        <Button onClick={saveProduct} disabled={saving || uploading}>
+          {saving ? "Збереження..." : "Створити"}
+        </Button>
+        <Button variant="outline" onClick={() => nav("/admin/products")} disabled={saving}>
+          Відмінити
+        </Button>
+      </div>
+    </div>
   );
 }

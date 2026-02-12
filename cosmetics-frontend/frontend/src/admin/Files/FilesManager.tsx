@@ -1,3 +1,4 @@
+// src/admin/Files/FilesManager.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { MetaTags } from "@/app/seo/MetaTags";
 import { AdminShell } from "@/admin/_ui/AdminShell";
@@ -35,9 +36,7 @@ export default function FilesManager() {
 
   const filtered = useMemo(() => {
     if (!q) return files;
-    return files.filter((f) =>
-      f.name.toLowerCase().includes(q.toLowerCase())
-    );
+    return files.filter((f) => f.name.toLowerCase().includes(q.toLowerCase()));
   }, [files, q]);
 
   async function upload() {
@@ -50,7 +49,8 @@ export default function FilesManager() {
   async function renameFile(oldName: string) {
     const newName = rename[oldName];
     if (!newName) return;
-    await UploadsApi.rename(oldName, newName);
+    // ✅ Викликаємо правильний метод
+    await UploadsApi.renameFile({ oldName, newName });
     setRename((p) => {
       const c = { ...p };
       delete c[oldName];
@@ -61,7 +61,8 @@ export default function FilesManager() {
 
   async function remove(name: string) {
     if (!confirm("Видалити файл?")) return;
-    await UploadsApi.delete(name);
+    // ✅ Викликаємо правильний метод
+    await UploadsApi.deleteFile(name);
     load();
   }
 
@@ -70,16 +71,9 @@ export default function FilesManager() {
       <MetaTags title="Admin — Files" />
       <AdminShell title="Files manager">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-          <Input
-            placeholder="Search file…"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
+          <Input placeholder="Search file…" value={q} onChange={(e) => setQ(e.target.value)} />
 
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
+          <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} />
 
           <Button onClick={upload} disabled={!file}>
             Upload
@@ -102,42 +96,25 @@ export default function FilesManager() {
               {filtered.map((f) => (
                 <tr key={f.name} className="border-b border-neutral-900">
                   <td className="py-2">
-                    <img
-                      src={f.url}
-                      className="h-12 w-12 object-cover rounded"
-                    />
+                    <img src={f.url} className="h-12 w-12 object-cover rounded" />
                   </td>
-
                   <td className="text-white">{f.name}</td>
-
                   <td>
                     <div className="flex gap-2">
                       <Input
                         placeholder="new name"
                         value={rename[f.name] || ""}
                         onChange={(e) =>
-                          setRename((p) => ({
-                            ...p,
-                            [f.name]: e.target.value,
-                          }))
+                          setRename((p) => ({ ...p, [f.name]: e.target.value }))
                         }
                       />
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => renameFile(f.name)}
-                      >
+                      <Button size="sm" variant="outline" onClick={() => renameFile(f.name)}>
                         OK
                       </Button>
                     </div>
                   </td>
-
                   <td className="text-right">
-                    <Button
-                      size="sm"
-                      variant="danger"
-                      onClick={() => remove(f.name)}
-                    >
+                    <Button size="sm" variant="danger" onClick={() => remove(f.name)}>
                       Delete
                     </Button>
                   </td>
