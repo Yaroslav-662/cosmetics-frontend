@@ -4,7 +4,13 @@ import { MetaTags } from "@/app/seo/MetaTags";
 import { AdminShell } from "@/admin/_ui/AdminShell";
 import Input from "@/shared/ui/Input";
 import Button from "@/shared/ui/Button";
-import { UploadsApi } from "@/features/uploads/api/uploads.api";
+
+import {
+  adminGetAllUploads,
+  adminUploadGenericFile,
+  adminRenameUpload,
+  adminDeleteUpload,
+} from "@/admin/api/upload.api";
 
 type FileItem = {
   name: string;
@@ -23,8 +29,8 @@ export default function FilesManager() {
   async function load() {
     setLoading(true);
     try {
-      const res = await UploadsApi.listAll();
-      setFiles(res.files || []);
+      const res = await adminGetAllUploads();
+      setFiles(res || []);
     } finally {
       setLoading(false);
     }
@@ -36,12 +42,14 @@ export default function FilesManager() {
 
   const filtered = useMemo(() => {
     if (!q) return files;
-    return files.filter((f) => f.name.toLowerCase().includes(q.toLowerCase()));
+    return files.filter((f) =>
+      f.name.toLowerCase().includes(q.toLowerCase())
+    );
   }, [files, q]);
 
   async function upload() {
     if (!file) return;
-    await UploadsApi.uploadFile(file);
+    await adminUploadGenericFile(file);
     setFile(null);
     load();
   }
@@ -49,20 +57,21 @@ export default function FilesManager() {
   async function renameFile(oldName: string) {
     const newName = rename[oldName];
     if (!newName) return;
-    // ✅ Викликаємо правильний метод
-    await UploadsApi.renameFile({ oldName, newName });
+
+    await adminRenameUpload(oldName, newName);
+
     setRename((p) => {
       const c = { ...p };
       delete c[oldName];
       return c;
     });
+
     load();
   }
 
   async function remove(name: string) {
     if (!confirm("Видалити файл?")) return;
-    // ✅ Викликаємо правильний метод
-    await UploadsApi.deleteFile(name);
+    await adminDeleteUpload(name);
     load();
   }
 
@@ -71,9 +80,16 @@ export default function FilesManager() {
       <MetaTags title="Admin — Files" />
       <AdminShell title="Files manager">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-          <Input placeholder="Search file…" value={q} onChange={(e) => setQ(e.target.value)} />
+          <Input
+            placeholder="Search file…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
 
-          <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+          />
 
           <Button onClick={upload} disabled={!file}>
             Upload
@@ -96,7 +112,10 @@ export default function FilesManager() {
               {filtered.map((f) => (
                 <tr key={f.name} className="border-b border-neutral-900">
                   <td className="py-2">
-                    <img src={f.url} className="h-12 w-12 object-cover rounded" />
+                    <img
+                      src={f.url}
+                      className="h-12 w-12 object-cover rounded"
+                    />
                   </td>
                   <td className="text-white">{f.name}</td>
                   <td>
@@ -105,16 +124,27 @@ export default function FilesManager() {
                         placeholder="new name"
                         value={rename[f.name] || ""}
                         onChange={(e) =>
-                          setRename((p) => ({ ...p, [f.name]: e.target.value }))
+                          setRename((p) => ({
+                            ...p,
+                            [f.name]: e.target.value,
+                          }))
                         }
                       />
-                      <Button size="sm" variant="outline" onClick={() => renameFile(f.name)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => renameFile(f.name)}
+                      >
                         OK
                       </Button>
                     </div>
                   </td>
                   <td className="text-right">
-                    <Button size="sm" variant="danger" onClick={() => remove(f.name)}>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={() => remove(f.name)}
+                    >
                       Delete
                     </Button>
                   </td>
@@ -135,3 +165,5 @@ export default function FilesManager() {
     </>
   );
 }
+
+
