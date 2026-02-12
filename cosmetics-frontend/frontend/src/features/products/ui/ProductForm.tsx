@@ -1,8 +1,9 @@
+// src/features/products/ui/ProductForm.tsx
+
 import React from "react";
 import Input from "@/shared/ui/Input";
 import Button from "@/shared/ui/Button";
-import { ProductImagesUploader } from "./ProductImagesUploader";
-import CategorySelect from "@/features/categories/ui/CategorySelect";
+import { CategorySelect } from "@/features/categories/ui/CategorySelect";
 
 export type ProductFormData = {
   name: string;
@@ -16,7 +17,7 @@ export type ProductFormData = {
 interface Props {
   value: ProductFormData;
   onChange: (v: ProductFormData) => void;
-  onSubmit: () => void;
+  onSubmit: (dto: ProductFormData) => void;
   loading?: boolean;
 }
 
@@ -24,12 +25,16 @@ export const ProductForm: React.FC<Props> = ({
   value,
   onChange,
   onSubmit,
-  loading,
+  loading = false,
 }) => {
+  const submit = () => {
+    onSubmit(value);
+  };
+
   return (
     <div className="space-y-6">
       <Input
-        label="Назва товару"
+        placeholder="Назва товару"
         value={value.name}
         onChange={(e) =>
           onChange({ ...value, name: e.target.value })
@@ -47,7 +52,7 @@ export const ProductForm: React.FC<Props> = ({
 
       <Input
         type="number"
-        label="Ціна"
+        placeholder="Ціна"
         value={value.price}
         onChange={(e) =>
           onChange({ ...value, price: Number(e.target.value) })
@@ -56,7 +61,7 @@ export const ProductForm: React.FC<Props> = ({
 
       <CategorySelect
         value={value.categoryId}
-        onChange={(id) =>
+        onChange={(id: string) =>
           onChange({ ...value, categoryId: id })
         }
       />
@@ -72,17 +77,7 @@ export const ProductForm: React.FC<Props> = ({
         Активний товар
       </label>
 
-      <div>
-        <div className="font-semibold mb-2">Фото товару</div>
-        <ProductImagesUploader
-          value={value.images}
-          onChange={(images) =>
-            onChange({ ...value, images })
-          }
-        />
-      </div>
-
-      <Button onClick={onSubmit} disabled={loading}>
+      <Button type="button" onClick={submit} disabled={loading}>
         {loading ? "Saving…" : "Save product"}
       </Button>
     </div>

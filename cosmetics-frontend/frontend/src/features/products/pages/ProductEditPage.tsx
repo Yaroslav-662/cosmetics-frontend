@@ -1,28 +1,46 @@
-// src/features/products/pages/ProductEditPage.tsx
+// src/features/products/pages/ProductCreatePage.tsx
 
-import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
-import { ProductForm } from "../ui/ProductForm";
+import { ProductForm, ProductFormData } from "../ui/ProductForm";
+import type { CreateProductDto } from "../model/product.types";
 
-export const ProductEditPage: React.FC = () => {
-  const { id } = useParams();
-  const { selected, fetchProduct, updateProduct } = useProducts();
+export const ProductCreatePage: React.FC = () => {
+  const { createProduct } = useProducts();
+  const nav = useNavigate();
 
-  useEffect(() => {
-    if (id) fetchProduct(id);
-  }, [id]);
+  const [form, setForm] = useState<ProductFormData>({
+    name: "",
+    description: "",
+    price: 0,
+    images: [],
+    categoryId: "",
+    isActive: true,
+  });
 
-  if (!selected)
-    return <p className="text-neutral-400 p-6">Завантаження...</p>;
+  const submit = async (v: ProductFormData) => {
+    const dto: CreateProductDto = {
+      name: v.name,
+      description: v.description,
+      price: v.price,
+      images: v.images,
+      category: v.categoryId,
+      stock: v.isActive ? 999 : 0, // ⬅ тимчасова логіка
+    };
+
+    const res = await createProduct(dto);
+    if (res) nav("/admin/products");
+  };
 
   return (
     <div className="p-6 max-w-xl mx-auto text-white">
-      <h1 className="text-2xl font-bold mb-4">Редагувати товар</h1>
+      <h1 className="text-2xl font-bold mb-4">Новий товар</h1>
 
       <ProductForm
-        initial={selected}
-        onSubmit={(dto) => updateProduct(selected._id, dto)}
+        value={form}
+        onChange={setForm}
+        onSubmit={submit}
       />
     </div>
   );
