@@ -1,181 +1,110 @@
-// src/features/products/pages/EditProduct.tsx
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { UploadsApi } from "@/features/uploads/api/uploads.api";
-import { api } from "@/core/api/axios";
+// src/admin/Products/ProductEdit.tsx
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Input from "@/shared/ui/Input";
-import Select from "@/shared/ui/Select";
 import Button from "@/shared/ui/Button";
+import { ProductImagesUploader } from "@/features/products/ui/ProductImagesUploader";
+import { adminUploadProductImages } from "@/admin/api/upload.api";
+import { api } from "@/core/api/axios";
 
-interface Category {
+interface Product {
   _id: string;
   name: string;
+  price: number;
+  description?: string;
+  images: string[];
 }
 
-const MAX_IMAGES = 10;
+export default function ProductEdit() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
-export default function EditProduct() {
-  const { id = "" } = useParams();
-  const nav = useNavigate();
-  const fileRef = useRef<HTMLInputElement | null>(null);
-
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [form, setForm] = useState({
-    name: "",
-    price: 0,
-    stock: 0,
-    category: "",
-    description: "",
-    images: [] as string[],
-  });
-
-  const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
 
+  // Завантаження продукту
   useEffect(() => {
-    Promise.all([
-      api.get("/api/categories"),
-      api.get(`/api/products/${id}`),
-    ])
-      .then(([catRes, prodRes]) => {
-        setCategories(catRes.data);
-        const p = prodRes.data;
-        setForm({
-          name: p.name || "",
-          price: p.price || 0,
-          stock: p.stock || 0,
-          category: p.category?._id || p.category || "",
-          description: p.description || "",
-          images: Array.isArray(p.images) ? p.images : [],
-        });
-      })
+    if (!id) return;
+    setLoading(true);
+    api
+      .get<Product>(`/api/products/${id}`)
+      .then((res) => setProduct(res.data))
       .finally(() => setLoading(false));
   }, [id]);
 
-  const uploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || !files.length) return;
-    e.target.value = "";
+  if (!product) return <div className="text-white">Loading…</div>;
 
-    const free = MAX_IMAGES - form.images.length;
-    const sliced = Array.from(files).slice(0, free);
+  // Локальні функції для роботи з картинками
+  function pickFiles(file: File) {
+    setProduct((p) => p ? { ...p, images: [...p.images, URL.createObjectURL(file)] } : p);
+  }
 
-    setUploading(true);
-    try {
-      const { urls } = await UploadsApi.uploadProductImages(sliced);
-      setForm((p) => ({ ...p, images: [...p.images, ...urls] }));
-    } catch (e) {
-      console.error(e);
-      alert("Помилка завантаження фото");
-    } finally {
-      setUploading(false);
-    }
-  };
+  function removeImage(url: string) {
+    setProduct((p) => p ? { ...p, images: p.images.filter((i) => i !== url) } : p);
+  }
 
-  const saveProduct = async () => {
+  function makeMain(url: string) {
+    setProduct((p) => p ? { ...p, images: [url, ...p.images.filter((i) => i !== url)] } : p);
+  }
+
+  async function onSave() {
+    if (!product) return;
     setSaving(true);
     try {
-      await api.put(`/api/products/${id}`, form);
-      nav("/admin/products");
-    } catch (e) {
-      console.error(e);
-      alert("Помилка збереження товару");
+      await api.put(`/api/products/${product._id}`, product);
+      alert("Product saved!");
+      navigate("/admin/products");
+    } catch (err: any) {
+      alert(err?.response?.data?.message || "Error saving product");
     } finally {
       setSaving(false);
     }
-  };
-
-  if (loading) return <div className="p-4">Завантаження...</div>;
+  }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 space-y-4">
-      <h2 className="text-xl font-bold">Редагувати товар</h2>
+    <div className="space-y-4 p-4 text-white">
+      <h1 className="text-2xl font-bold">Edit Product</h1>
 
-      <Input
-        placeholder="Назва"
-        value={form.name}
-        onChange={(e) => setForm({ ...form, name: e.target.value })}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label>Name</label>
+          <Input
+            value={product.name}
+            onChange={(e) => setProduct({ ...product, name: e.target.value })}
+          />
 
-      <Input
-        type="number"
-        placeholder="Ціна"
-        value={String(form.price)}
-        onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-      />
+          <label>Price</label>
+          <Input
+            type="number"
+            value={product.price}
+            onChange={(e) => setProduct({ ...product, price: Number(e.target.value) })}
+          />
 
-      <Input
-        type="number"
-        placeholder="Кількість на складі"
-        value={String(form.stock)}
-        onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
-      />
-
-      <Select
-        value={form.category}
-        onChange={(e) => setForm({ ...form, category: e.target.value })}
-      >
-        <option value="">— Виберіть категорію —</option>
-        {categories.map((c) => (
-          <option key={c._id} value={c._id}>
-            {c.name}
-          </option>
-        ))}
-      </Select>
-
-      <textarea
-        placeholder="Опис"
-        value={form.description}
-        onChange={(e) => setForm({ ...form, description: e.target.value })}
-        className="w-full p-2 border rounded"
-      />
-
-      <div>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          multiple
-          className="hidden"
-          onChange={uploadFiles}
-        />
-        <Button onClick={pickFiles} disabled={form.images.length >= MAX_IMAGES || uploading}>
-          {uploading ? "Завантаження..." : "Додати фото"}
-        </Button>
-        <div className="flex gap-2 mt-2 flex-wrap">
-          {form.images.map((url, i) => (
-            <div key={url} className="relative w-24 h-24 border rounded overflow-hidden">
-              <img src={url} alt="" className="w-full h-full object-cover" />
-              <button
-                onClick={() => removeImage(url)}
-                className="absolute top-0 right-0 bg-red-500 text-white px-1 text-xs"
-              >
-                X
-              </button>
-              {i !== 0 && (
-                <button
-                  onClick={() => makeMain(i)}
-                  className="absolute bottom-0 left-0 bg-yellow-400 text-black px-1 text-xs"
-                >
-                  Main
-                </button>
-              )}
-            </div>
-          ))}
+          <label>Description</label>
+          <Input
+            value={product.description || ""}
+            onChange={(e) => setProduct({ ...product, description: e.target.value })}
+          />
         </div>
-        <div className="text-xs mt-1">{form.images.length}/{MAX_IMAGES} фото</div>
+
+        <div className="space-y-2">
+          <label>Images</label>
+          <ProductImagesUploader
+            value={product.images}
+            onChange={(imgs) => setProduct({ ...product, images: imgs })}
+          />
+        </div>
       </div>
 
       <div className="flex gap-2 mt-4">
-        <Button onClick={saveProduct} disabled={saving || uploading}>
-          {saving ? "Збереження..." : "Зберегти"}
+        <Button onClick={onSave} disabled={saving}>
+          {saving ? "Saving…" : "Save"}
         </Button>
-        <Button variant="outline" onClick={() => nav("/admin/products")} disabled={saving}>
-          Відмінити
+        <Button variant="outline" onClick={() => navigate("/admin/products")}>
+          Cancel
         </Button>
       </div>
     </div>
   );
 }
-
