@@ -1,7 +1,8 @@
 // src/features/products/pages/EditProduct.tsx
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import { UploadsApi } from "@/features/uploads/api/uploads.api";
+import { api } from "@/core/api/axios";
 import Input from "@/shared/ui/Input";
 import Select from "@/shared/ui/Select";
 import Button from "@/shared/ui/Button";
@@ -27,24 +28,17 @@ export default function EditProduct() {
     description: "",
     images: [] as string[],
   });
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const token = localStorage.getItem("accessToken");
-
   useEffect(() => {
-    const fetch = async () => {
-      setLoading(true);
-      try {
-        const [catRes, prodRes] = await Promise.all([
-          axios.get("https://ecommerce-backend-mgfu.onrender.com/api/categories", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`https://ecommerce-backend-mgfu.onrender.com/api/products/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
+    Promise.all([
+      api.get("/api/categories"),
+      api.get(`/api/products/${id}`),
+    ])
+      .then(([catRes, prodRes]) => {
         setCategories(catRes.data);
         const p = prodRes.data;
         setForm({
@@ -55,16 +49,9 @@ export default function EditProduct() {
           description: p.description || "",
           images: Array.isArray(p.images) ? p.images : [],
         });
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
-  }, [id, token]);
-
-  const pickFiles = () => fileRef.current?.click();
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
 
   const uploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -74,59 +61,25 @@ export default function EditProduct() {
     const free = MAX_IMAGES - form.images.length;
     const sliced = Array.from(files).slice(0, free);
 
-    const formData = new FormData();
-    sliced.forEach((f) => formData.append("images", f));
-
     setUploading(true);
     try {
-      const res = await axios.post(
-        "https://ecommerce-backend-mgfu.onrender.com/api/upload/products",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      if (res.data.urls) {
-        setForm((p) => ({ ...p, images: [...p.images, ...res.data.urls] }));
-      }
-    } catch (err) {
-      console.error(err);
+      const { urls } = await UploadsApi.uploadProductImages(sliced);
+      setForm((p) => ({ ...p, images: [...p.images, ...urls] }));
+    } catch (e) {
+      console.error(e);
       alert("Помилка завантаження фото");
     } finally {
       setUploading(false);
     }
   };
 
-  const removeImage = (url: string) => {
-    setForm((p) => ({ ...p, images: p.images.filter((x) => x !== url) }));
-  };
-
-  const makeMain = (idx: number) => {
-    setForm((p) => {
-      const next = [...p.images];
-      const [u] = next.splice(idx, 1);
-      next.unshift(u);
-      return { ...p, images: next };
-    });
-  };
-
   const saveProduct = async () => {
-    if (!form.name.trim()) return alert("Назва товару обов'язкова");
-    if (form.price <= 0) return alert("Ціна має бути > 0");
-
     setSaving(true);
     try {
-      await axios.put(
-        `https://ecommerce-backend-mgfu.onrender.com/api/products/${id}`,
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.put(`/api/products/${id}`, form);
       nav("/admin/products");
-    } catch (err) {
-      console.error(err);
+    } catch (e) {
+      console.error(e);
       alert("Помилка збереження товару");
     } finally {
       setSaving(false);
@@ -225,3 +178,4 @@ export default function EditProduct() {
     </div>
   );
 }
+
