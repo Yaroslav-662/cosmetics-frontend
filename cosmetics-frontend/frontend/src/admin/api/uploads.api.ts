@@ -27,9 +27,13 @@ export type UploadProductImagesResponse = {
 export async function adminUploadGenericFile(file: File) {
   const form = new FormData();
   form.append("file", file);
-  const { data } = await api.post<UploadFileResponse>("/api/upload/file", form, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+
+  const { data } = await api.post<UploadFileResponse>(
+    "/api/upload/file",
+    form,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+
   return data;
 }
 
@@ -37,37 +41,41 @@ export async function adminUploadProductImages(files: File[]) {
   const form = new FormData();
   files.forEach((f) => form.append("images", f));
 
-  const { data } = await api.post<UploadProductImagesResponse>("/api/upload/products", form, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const { data } = await api.post<UploadProductImagesResponse>(
+    "/api/upload/products",
+    form,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+
   return data;
 }
 
 export async function adminGetAllUploads() {
-  // GET /api/upload => { files: [{name,url,size,...}] }
-  const { data } = await api.get<{ files: Array<{ name: string; url: string; size: number; createdAt: string }> }>(
-    "/api/upload"
-  );
+  const { data } = await api.get<{
+    files: Array<{ name: string; url: string; size: number; createdAt: string }>;
+  }>("/api/upload");
+
   return data.files;
 }
 
-export async function adminGetProductUploads() {
-  // якщо ти додав GET /api/upload/products -> { files: [...] } або { urls: [...] }
-  const { data } = await api.get<any>("/api/upload/products");
-  return data;
-}
-
 export async function adminDeleteUpload(name: string) {
-  const { data } = await api.delete(`/api/upload/${encodeURIComponent(name)}`);
+  const { data } = await api.delete(
+    `/api/upload/${encodeURIComponent(name)}`
+  );
   return data;
 }
 
 export async function adminDeleteProductByUrl(url: string) {
-  const { data } = await api.delete("/api/upload/by-url", { data: { url } });
+  const { data } = await api.delete("/api/upload/by-url", {
+    data: { url },
+  });
   return data;
 }
 
 export async function adminRenameUpload(oldName: string, newName: string) {
-  const { data } = await api.put("/api/upload/rename", { oldName, newName });
+  const { data } = await api.put("/api/upload/rename", {
+    oldName,
+    newName,
+  });
   return data;
 }
