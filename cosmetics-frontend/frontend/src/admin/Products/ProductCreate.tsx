@@ -29,40 +29,34 @@ export default function CreateProduct() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const token = localStorage.getItem("accessToken");
-
   useEffect(() => {
-    // Завантажуємо список категорій
-    axios
-      .get("https://ecommerce-backend-mgfu.onrender.com/api/categories", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    api
+      .get("/api/categories")
       .then((res) => setCategories(res.data))
       .catch(() => setCategories([]));
-  }, [token]);
+  }, []);
 
   const pickFiles = () => fileRef.current?.click();
 
- const uploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const files = e.target.files;
-  if (!files || !files.length) return;
-  e.target.value = "";
+  const uploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || !files.length) return;
+    e.target.value = "";
 
-  const free = MAX_IMAGES - form.images.length;
-  const sliced = Array.from(files).slice(0, free);
+    const free = MAX_IMAGES - form.images.length;
+    const sliced = Array.from(files).slice(0, free);
 
-  setUploading(true);
-  try {
-    const { urls } = await UploadsApi.uploadProductImages(sliced);
-    setForm((p) => ({ ...p, images: [...p.images, ...urls] }));
-  } catch (err) {
-    console.error(err);
-    alert("Помилка завантаження фото");
-  } finally {
-    setUploading(false);
-  }
-};
-
+    setUploading(true);
+    try {
+      const { urls } = await UploadsApi.uploadProductImages(sliced);
+      setForm((p) => ({ ...p, images: [...p.images, ...urls] }));
+    } catch (err) {
+      console.error(err);
+      alert("Помилка завантаження фото");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const removeImage = (url: string) => {
     setForm((p) => ({ ...p, images: p.images.filter((x) => x !== url) }));
@@ -83,11 +77,7 @@ export default function CreateProduct() {
 
     setSaving(true);
     try {
-      await axios.post(
-        "https://ecommerce-backend-mgfu.onrender.com/api/products",
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post("/api/products", form);
       nav("/admin/products");
     } catch (err) {
       console.error(err);
@@ -187,4 +177,5 @@ export default function CreateProduct() {
     </div>
   );
 }
+
 
