@@ -1,7 +1,7 @@
 // src/features/products/ui/ProductImagesUploader.tsx
 import React, { useState } from "react";
 import Button from "@/shared/ui/Button";
-import { UploadsApi } from "@/features/uploads/api/uploads.api";
+import { adminUploadProductImages } from "@/admin/api/upload.api";
 
 interface Props {
   value: string[];
@@ -14,15 +14,15 @@ export const ProductImagesUploader: React.FC<Props> = ({ value, onChange }) => {
   async function onUpload(file: File) {
     setLoading(true);
     try {
-      // ✅ Викликаємо правильний метод для завантаження одного файлу
-      const res = await UploadsApi.uploadProductImages([file]);
+      const res = await adminUploadProductImages([file]);
+      // додаємо нові URL
       onChange([...value, ...(res.urls || [])]);
     } finally {
       setLoading(false);
     }
   }
 
-  function remove(url: string) {
+  function removeImage(url: string) {
     onChange(value.filter((i) => i !== url));
   }
 
@@ -43,7 +43,7 @@ export const ProductImagesUploader: React.FC<Props> = ({ value, onChange }) => {
             <img src={img} className="h-32 w-full object-cover rounded-lg" />
             <button
               type="button"
-              onClick={() => remove(img)}
+              onClick={() => removeImage(img)}
               className="absolute top-1 right-1 bg-black/70 text-white px-2 rounded"
             >
               ✕
