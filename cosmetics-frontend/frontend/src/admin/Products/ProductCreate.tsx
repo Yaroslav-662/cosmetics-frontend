@@ -1,7 +1,8 @@
 // src/features/products/pages/CreateProduct.tsx
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { UploadsApi } from "@/features/uploads/api/uploads.api";
+import { api } from "@/core/api/axios";
 import Input from "@/shared/ui/Input";
 import Select from "@/shared/ui/Select";
 import Button from "@/shared/ui/Button";
@@ -42,39 +43,26 @@ export default function CreateProduct() {
 
   const pickFiles = () => fileRef.current?.click();
 
-  const uploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || !files.length) return;
-    e.target.value = "";
+ const uploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (!files || !files.length) return;
+  e.target.value = "";
 
-    const free = MAX_IMAGES - form.images.length;
-    const sliced = Array.from(files).slice(0, free);
+  const free = MAX_IMAGES - form.images.length;
+  const sliced = Array.from(files).slice(0, free);
 
-    const formData = new FormData();
-    sliced.forEach((f) => formData.append("images", f));
+  setUploading(true);
+  try {
+    const { urls } = await UploadsApi.uploadProductImages(sliced);
+    setForm((p) => ({ ...p, images: [...p.images, ...urls] }));
+  } catch (err) {
+    console.error(err);
+    alert("Помилка завантаження фото");
+  } finally {
+    setUploading(false);
+  }
+};
 
-    setUploading(true);
-    try {
-      const res = await axios.post(
-        "https://ecommerce-backend-mgfu.onrender.com/api/upload/products",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      if (res.data.urls) {
-        setForm((p) => ({ ...p, images: [...p.images, ...res.data.urls] }));
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Помилка завантаження фото");
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const removeImage = (url: string) => {
     setForm((p) => ({ ...p, images: p.images.filter((x) => x !== url) }));
@@ -199,3 +187,4 @@ export default function CreateProduct() {
     </div>
   );
 }
+
