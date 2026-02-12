@@ -1,3 +1,4 @@
+// src/pages/ProductPage.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import { MetaTags } from "@/app/seo/MetaTags";
@@ -12,12 +13,10 @@ import { api } from "@/core/api/axios";
 import type { Product } from "@/features/products/model/product.types";
 import { useReviews } from "@/features/reviews/hooks/useReviews";
 
+// Завжди віддає повний URL або placeholder
 function resolveImage(src?: string) {
-  if (!src) return "https://placehold.co/900x900?text=No+Image";
-  if (src.startsWith("http://") || src.startsWith("https://")) return src;
-  // якщо бекенд віддає /uploads/.. або /files/.. — воно підхопиться baseURL-ом у <img> не завжди.
-  // тому лишаємо як відносний шлях.
-  return src;
+  if (src && src.startsWith("http")) return src;
+  return "https://placehold.co/900x900?text=No+Image";
 }
 
 export default function ProductPage() {
@@ -29,18 +28,16 @@ export default function ProductPage() {
   const [pLoading, setPLoading] = useState(false);
   const [pError, setPError] = useState<string | null>(null);
 
-  // Reviews store
   const { reviews, loading, error, fetchReviews, createReview, deleteReview } = useReviews();
 
-  // create review UI
   const [rating, setRating] = useState<number>(5);
   const [comment, setComment] = useState<string>("");
 
-  const canCreate = !!user; // guest не може POST
+  const canCreate = !!user;
 
+  // Завантаження продукту
   useEffect(() => {
     if (!id) return;
-
     setPLoading(true);
     setPError(null);
 
@@ -51,22 +48,22 @@ export default function ProductPage() {
       .finally(() => setPLoading(false));
   }, [id]);
 
+  // Завантаження відгуків
   useEffect(() => {
     if (!id) return;
     fetchReviews(id);
   }, [id, fetchReviews]);
 
+  // Масив фото (тільки URL з бекенду)
   const images = useMemo(() => {
-    const anyP: any = product as any;
-    const arr = (anyP?.images as string[]) || (anyP?.image ? [anyP.image] : []);
-    return arr.length ? arr : ["https://placehold.co/900x900?text=No+Image"];
+    if (!product) return ["https://placehold.co/900x900?text=No+Image"];
+    return Array.isArray(product.images) && product.images.length > 0
+      ? product.images
+      : ["https://placehold.co/900x900?text=No+Image"];
   }, [product]);
 
   const [activeImage, setActiveImage] = useState(0);
-
-  useEffect(() => {
-    setActiveImage(0);
-  }, [id]);
+  useEffect(() => setActiveImage(0), [id]);
 
   const avg = useMemo(() => {
     if (!reviews?.length) return 0;
@@ -94,20 +91,16 @@ export default function ProductPage() {
 
   function addToCart() {
     if (!product) return;
-    const anyP: any = product;
     cart.add({
-      _id: anyP._id,
-      name: anyP.name,
-      price: anyP.price,
+      _id: product._id,
+      name: product.name,
+      price: product.price,
       image: resolveImage(images[0]),
     });
   }
 
-  if (pLoading) {
-    return <div className="text-neutral-300">Завантаження…</div>;
-  }
-
-  if (pError) {
+  if (pLoading) return <div className="text-neutral-300">Завантаження…</div>;
+  if (pError)
     return (
       <div className="space-y-3">
         <div className="text-red-300">{pError}</div>
@@ -116,15 +109,11 @@ export default function ProductPage() {
         </NavLink>
       </div>
     );
-  }
-
   if (!product) return null;
-
-  const anyP: any = product;
 
   return (
     <>
-      <MetaTags title={anyP.name || "Product"} />
+      <MetaTags title={product.name || "Product"} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* LEFT: GALLERY */}
@@ -132,7 +121,7 @@ export default function ProductPage() {
           <div className="border border-neutral-800 bg-neutral-900/40 rounded-2xl overflow-hidden">
             <img
               src={resolveImage(images[activeImage])}
-              alt={anyP.name}
+              alt={product.name}
               className="w-full aspect-square object-cover"
             />
           </div>
@@ -158,7 +147,7 @@ export default function ProductPage() {
         {/* RIGHT: INFO */}
         <div className="space-y-5">
           <div>
-            <h1 className="text-3xl font-bold text-gold-300">{anyP.name}</h1>
+            <h1 className="text-3xl font-bold text-gold-300">{product.name}</h1>
             <div className="text-sm text-neutral-400 mt-1">
               {reviews.length ? (
                 <>
@@ -171,9 +160,8 @@ export default function ProductPage() {
             </div>
           </div>
 
-          <div className="text-2xl font-semibold text-white">{anyP.price} ₴</div>
-
-          {anyP.description && <p className="text-neutral-300 text-sm leading-relaxed">{anyP.description}</p>}
+          <div className="text-2xl font-semibold text-white">{product.price} ₴</div>
+          {product.description && <p className="text-neutral-300 text-sm leading-relaxed">{product.description}</p>}
 
           <div className="flex gap-3">
             <Button onClick={addToCart}>Додати в кошик</Button>
@@ -193,7 +181,7 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {/* REVIEWS SECTION */}
+      {/* REVIEWS */}
       <div className="mt-12 space-y-5">
         <div className="flex items-end justify-between gap-4">
           <div>
@@ -206,14 +194,12 @@ export default function ProductPage() {
           </NavLink>
         </div>
 
-        {/* CREATE */}
+        {/* CREATE REVIEW */}
         <div className="border border-neutral-800 bg-neutral-900/60 rounded-2xl p-4">
           <div className="font-semibold text-white mb-3">Залишити відгук</div>
 
           {!canCreate ? (
-            <div className="text-sm text-neutral-400">
-              Увійдіть, щоб залишити відгук.
-            </div>
+            <div className="text-sm text-neutral-400">Увійдіть, щоб залишити відгук.</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
               <div className="md:col-span-1">
@@ -241,7 +227,7 @@ export default function ProductPage() {
           )}
         </div>
 
-        {/* LIST */}
+        {/* LIST REVIEWS */}
         <div className="space-y-3">
           {loading && <div className="text-neutral-400">Завантаження…</div>}
           {error && <div className="text-red-300 text-sm">{error}</div>}

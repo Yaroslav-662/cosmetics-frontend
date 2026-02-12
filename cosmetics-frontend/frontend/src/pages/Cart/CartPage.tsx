@@ -1,89 +1,40 @@
-// src/pages/Cart/CartPage.tsx
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useCartStore } from "@/store/cart.store";
-import Button from "@/shared/ui/Button";
-import { MetaTags } from "@/app/seo/MetaTags";
+import { CartList } from "@/features/cart/ui/CartList";
+import { CartSummary } from "@/features/cart/ui/CartSummary";
+import { Link } from "react-router-dom";
 
-const CartPage: React.FC = () => {
-  const items = useCartStore((s) => s.items);
-  const total = useCartStore((s) => s.total);
-  const remove = useCartStore((s) => s.remove);
-  const clearCart = useCartStore((s) => s.clear);
-
-  const navigate = useNavigate();
-
+export default function CartPage() {
   return (
-    <>
-      <MetaTags title="Кошик" />
+    <div className="max-w-7xl mx-auto px-6 py-10">
+      {/* Top bar */}
+      <div className="flex justify-between items-center mb-10">
+        <Link to="/" className="text-sm text-neutral-500 hover:text-black">
+          ← Back to shop
+        </Link>
 
-      <h1 className="text-2xl font-bold text-gold-300 mb-6">
-        Кошик
+        <span className="text-sm text-neutral-500">
+          Customer Support
+        </span>
+      </div>
+
+      <h1 className="text-3xl font-semibold text-center mb-2">
+        Shopping Cart
       </h1>
 
-      {items.length === 0 && (
-        <div className="space-y-4">
-          <div className="text-gray-400">Кошик порожній.</div>
-          <Link to="/shop">
-            <Button>Перейти до каталогу</Button>
-          </Link>
+      <p className="text-center text-neutral-500 mb-10">
+        Shipping charges and discount codes are confirmed at checkout.
+      </p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10">
+        {/* LEFT */}
+        <div>
+          <h2 className="font-semibold mb-4">Your order</h2>
+          <CartList />
         </div>
-      )}
 
-      {items.length > 0 && (
-        <>
-          <ul className="space-y-3">
-            {items.map((item) => (
-              <li
-                key={item._id}
-                className="flex items-center justify-between border border-white/5 rounded-2xl px-4 py-3"
-              >
-                <div>
-                  <div className="font-semibold text-gold-100">
-                    {item.name}
-                  </div>
-                  <div className="text-sm text-gray-400">
-                    {item.quantity} × {item.price} ₴
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="font-semibold text-gold-300">
-                    {item.price * item.quantity} ₴
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={() => remove(item._id)}
-                  >
-                    Видалити
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex justify-between items-center border-t border-white/10 pt-4 mt-6">
-            <div className="text-lg">
-              Разом:{" "}
-              <span className="font-bold text-gold-300">
-                {total} ₴
-              </span>
-            </div>
-
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={clearCart}>
-                Очистити
-              </Button>
-              <Button onClick={() => navigate("/checkout")}>
-                Оформити замовлення
-              </Button>
-            </div>
-          </div>
-        </>
-      )}
-    </>
+        {/* RIGHT */}
+        <CartSummary />
+      </div>
+    </div>
   );
-};
-
-export default CartPage;
+}

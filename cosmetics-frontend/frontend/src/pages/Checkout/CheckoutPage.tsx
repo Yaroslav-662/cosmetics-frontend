@@ -1,73 +1,105 @@
-// src/pages/Checkout/CheckoutPage.tsx
-import React, { useMemo, useState } from "react";
-import { useCart } from "@/store/cart.store";
-import axios from "@/shared/api/axios";
+// src/pages/cart/CheckoutPage.tsx
+import React, { useState } from "react";
+import Input from "@/shared/ui/Input";
+import Button from "@/shared/ui/Button";
+import { useCartStore } from "@/features/cart/model/cart.store";
 
-export const CheckoutPage = () => {
-  const { items, clear } = useCart();
+export default function CheckoutPage() {
+  const items = useCartStore((s) => s.items);
+  const subtotal = useCartStore((s) => s.getSubtotal());
 
-  const total = items.reduce(
-    (sum, i) => sum + i.price * i.qty,
-    0
-  );
+  const [shipping, setShipping] = useState<"pickup" | "delivery">("pickup");
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    await axios.post("/orders", {
-      items,
-      total,
-      customer: {
-        name: "Test User",
-        email: "test@mail.com",
-        address: "Kyiv",
-      },
-    });
-
-    clear();
-    alert("Order placed!");
-  };
+  const shippingPrice = shipping === "pickup" ? 16 : 36;
+  const total = subtotal + shippingPrice;
 
   return (
-    <form
-      onSubmit={submit}
-      className="max-w-6xl mx-auto p-6 grid grid-cols-3 gap-8"
-    >
-      {/* LEFT */}
-      <div className="col-span-2 space-y-4">
-        <h2 className="text-xl font-bold">Billing details</h2>
+    <div className="max-w-7xl mx-auto px-6 py-10 text-white">
+      <h1 className="text-3xl font-semibold mb-8">Checkout</h1>
 
-        <input placeholder="Name" className="input" />
-        <input placeholder="Email" className="input" />
-        <input placeholder="Address" className="input" />
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* LEFT */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* CUSTOMER */}
+          <section className="bg-zinc-900 rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-medium">Customer</h2>
 
-      {/* RIGHT */}
-      <div className="border p-6 rounded-lg">
-        <h2 className="text-xl font-bold mb-4">Your order</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm text-gray-400">Email</label>
+                <Input type="email" />
+              </div>
 
-        {items.map((i) => (
-          <div key={i.id} className="flex justify-between">
-            <span>{i.title} × {i.qty}</span>
-            <span>${i.price * i.qty}</span>
-          </div>
-        ))}
+              <div>
+                <label className="text-sm text-gray-400">Phone</label>
+                <Input type="tel" />
+              </div>
+            </div>
 
-        <hr className="my-4" />
+            <div>
+              <label className="text-sm text-gray-400">Address</label>
+              <Input />
+            </div>
+          </section>
 
-        <div className="flex justify-between font-bold">
-          <span>Total</span>
-          <span>${total.toFixed(2)}</span>
+          {/* SHIPPING */}
+          <section className="bg-zinc-900 rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-medium">Shipping</h2>
+
+            <label className="flex items-center gap-3">
+              <input
+                type="radio"
+                checked={shipping === "pickup"}
+                onChange={() => setShipping("pickup")}
+              />
+              <span>Pick-up</span>
+              <span className="ml-auto">16 ₴</span>
+            </label>
+
+            <label className="flex items-center gap-3">
+              <input
+                type="radio"
+                checked={shipping === "delivery"}
+                onChange={() => setShipping("delivery")}
+              />
+              <span>Delivery</span>
+              <span className="ml-auto">36 ₴</span>
+            </label>
+          </section>
         </div>
 
-        <button
-          type="submit"
-          className="mt-6 w-full bg-black text-white py-3 rounded"
-        >
-          Place order
-        </button>
-      </div>
-    </form>
-  );
-};
+        {/* RIGHT */}
+        <aside className="bg-zinc-900 rounded-lg p-6 space-y-4 h-fit">
+          <h2 className="text-lg font-medium">Summary</h2>
 
+          <div className="space-y-2 text-sm">
+            {items.map((i) => (
+              <div key={i.id} className="flex justify-between">
+                <span>
+                  {i.title} × {i.quantity}
+                </span>
+                <span>{i.subtotal.toFixed(2)} ₴</span>
+              </div>
+            ))}
+
+            <div className="flex justify-between">
+              <span>Shipping</span>
+              <span>{shippingPrice} ₴</span>
+            </div>
+
+            <hr className="border-gray-700" />
+
+            <div className="flex justify-between text-lg font-semibold">
+              <span>Total</span>
+              <span>{total.toFixed(2)} ₴</span>
+            </div>
+          </div>
+
+          <Button className="w-full mt-4">
+            Complete purchase
+          </Button>
+        </aside>
+      </div>
+    </div>
+  );
+}

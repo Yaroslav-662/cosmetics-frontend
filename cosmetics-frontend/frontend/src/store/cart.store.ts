@@ -1,61 +1,81 @@
 // frontend/src/store/cart.store.ts
 import { create } from "zustand";
 
-export interface CartItem {
-  id: string;
-  title: string;
+interface CartItem {
+  _id: string;
+  name: string;
   price: number;
   image: string;
-  qty: number;
+  quantity: number;
 }
 
 interface CartState {
   items: CartItem[];
-  add: (item: CartItem) => void;
+  count: number;
+  total: number;
+
+  add: (product: any) => void;
   remove: (id: string) => void;
-  inc: (id: string) => void;
-  dec: (id: string) => void;
   clear: () => void;
+  changeQty: (id: string, qty: number) => void;
 }
 
-export const useCart = create<CartState>((set) => ({
-  items: [],
+const CART_KEY = "beauty_cart";
 
-  add: (item) =>
-    set((state) => {
-      const existing = state.items.find((i) => i.id === item.id);
+function getCount(items: CartItem[]) {
+  return items.reduce((sum, i) => sum + i.quantity, 0);
+}
+
+function getTotal(items: CartItem[]) {
+  return items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+}
+
+export const useCartStore = create<CartState>((set, get) => {
+  const initialItems: CartItem[] = JSON.parse(
+    localStorage.getItem(CART_KEY) || "[]"
+  );
+
+  return {
+    items: initialItems,
+    count: getCount(initialItems),
+    total: getTotal(initialItems),
+
+    add: (product) => {
+      const { items } = get();
+      const existing = items.find((i) => i._id === product._id);
+
+      let updated: CartItem[];
+
       if (existing) {
-        return {
-          items: state.items.map((i) =>
-            i.id === item.id ? { ...i, qty: i.qty + 1 } : i
-          ),
-        };
+        updated = items.map((i) =>
+          i._id === product._id ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      } else {
+        updated = [...items, { ...product, quantity: 1 }];
       }
-      return { items: [...state.items, { ...item, qty: 1 }] };
-    }),
 
-  remove: (id) =>
-    set((state) => ({
-      items: state.items.filter((i) => i.id !== id),
-    })),
+      localStorage.setItem(CART_KEY, JSON.stringify(updated));
+      set({ items: updated, count: getCount(updated), total: getTotal(updated) });
+    },
 
-  inc: (id) =>
-    set((state) => ({
-      items: state.items.map((i) =>
-        i.id === id ? { ...i, qty: i.qty + 1 } : i
-      ),
-    })),
+    remove: (id) => {
+      const updated = get().items.filter((i) => i._id !== id);
+      localStorage.setItem(CART_KEY, JSON.stringify(updated));
+      set({ items: updated, count: getCount(updated), total: getTotal(updated) });
+    },
 
-  dec: (id) =>
-    set((state) => ({
-      items: state.items
-        .map((i) =>
-          i.id === id ? { ...i, qty: i.qty - 1 } : i
-        )
-        .filter((i) => i.qty > 0),
-    })),
+    changeQty: (id, qty) => {
+      const updated = get().items.map((i) =>
+        i._id === id ? { ...i, quantity: qty } : i
+      );
 
-  clear: () => set({ items: [] }),
-}));
+      localStorage.setItem(CART_KEY, JSON.stringify(updated));
+      set({ items: updated, count: getCount(updated), total: getTotal(updated) });
+    },
 
-
+    clear: () => {
+      localStorage.removeItem(CART_KEY);
+      set({ items: [], count: 0, total: 0 });
+    },
+  };
+});
